@@ -1506,6 +1506,23 @@
 .saved-notes article { border-left: 3px solid var(--color-burnt); padding: 10px 14px; background: #fbf7f0; margin-top: 10px; }
 .saved-notes article p { color: var(--color-charcoal) !important; white-space: pre-wrap; }
 .saved-notes small { color: var(--color-muted); display: block; margin-top: 8px; }
+.tracking-card { margin-top: 24px; display: grid; gap: 20px; }
+.tracking-card h2 { font-size: 22px; margin: 6px 0; }
+.tracking-card > div > p { color: var(--color-muted); line-height: 1.5; }
+.tracking-result { display: grid; gap: 10px; }
+.tracking-result input { width: 100%; min-height: 44px; padding: 10px; border: 1px solid var(--color-cream-border); }
+.tracking-result .text-button { justify-self: start; }
+.tracking-page { max-width: 800px; padding-block: 48px; }
+.tracking-page > .brand { margin-bottom: 38px; }
+.tracking-card-public { background: var(--color-cream-card); border: 1px solid var(--color-cream-border); border-radius: 16px; padding: 40px; }
+.tracking-card-public h1 { font-size: clamp(34px, 5vw, 50px); letter-spacing: -.04em; margin: 10px 0; }
+.tracking-heading, .tracking-details, .tracking-actions, .contact-order { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; }
+.tracking-status { margin-top: 34px; padding: 20px; background: #fbf7f0; border-radius: 10px; }
+.tracking-status h2 { font-size: 24px; margin: 5px 0; }
+.tracking-status p, .tracking-details p { color: var(--color-muted); line-height: 1.5; }
+.tracking-actions { margin-top: 34px; align-items: center; }
+.contact-order { background: #fbf7f0; padding: 16px; border-radius: 8px; align-items: center; margin: 24px 0; }
+@media (max-width: 700px) { .tracking-card-public { padding: 28px 24px; } .tracking-heading, .tracking-details, .tracking-actions, .contact-order { flex-direction: column; } }
 @media (max-width:700px) { .queue-controls { align-items:stretch; flex-direction:column; } .workspace-search input { width:100%; } .details-actions { width:100%; } .details-actions .button { flex:1; } }
 @media (max-width: 700px) {
   .intake-main,

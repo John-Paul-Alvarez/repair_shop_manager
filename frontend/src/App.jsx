@@ -17,6 +17,7 @@ import AcceptInvitationPage from "./pages/AcceptInvitationPage";
 import CreateWorkOrderPage from "./pages/CreateWorkOrderPage";
 import WorkOrderDetailsPage from "./pages/WorkOrderDetailsPage";
 import MyRepairsPage from "./pages/MyRepairsPage";
+import CustomerTrackingPage from "./pages/CustomerTrackingPage";
 function Gate({ children, mode }) {
   const location = useLocation();
   const { account, loading, error, refresh } = useAuth();
@@ -105,6 +106,7 @@ function App() {
             }
           />
           <Route path="/invite/:token" element={<AcceptInvitationPage />} />
+          <Route path="/track/:token" element={<CustomerTrackingPage />} />
           <Route path="/" element={<HomePage />} />
           <Route
             path="/create-account"

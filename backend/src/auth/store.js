@@ -7,6 +7,7 @@ function createStore(db, prefix = "") {
   const invitations = db.collection(prefix + "invitations");
   const technicians = db.collection(prefix + "technicians");
   const notes = db.collection(prefix + "repairNotes");
+  const trackingLinks = db.collection(prefix + "trackingLinks");
   return {
     async initialize() {
       await users.createIndex({ email: 1 }, { unique: true });
@@ -22,6 +23,9 @@ function createStore(db, prefix = "") {
         { unique: true, sparse: true },
       );
       await notes.createIndex({ shopId: 1, orderId: 1, createdAt: -1 });
+      await trackingLinks.createIndex({ tokenHash: 1 }, { unique: true });
+      await trackingLinks.createIndex({ orderId: 1 }, { unique: true });
+      await trackingLinks.createIndex({ expiresAt: 1 }, { expireAfterSeconds: 0 });
       await invitations.createIndex({ shopId: 1, email: 1 }, { unique: true });
       await invitations.createIndex({ tokenHash: 1 }, { unique: true });
       await invitations.createIndex(
@@ -343,6 +347,25 @@ function createStore(db, prefix = "") {
         .find({ shopId, orderId })
         .sort({ createdAt: 1, _id: 1 })
         .toArray(),
+    async createTrackingLink(shopId, orderId, tokenHash) {
+      const link = {
+        shopId,
+        orderId,
+        tokenHash,
+        createdAt: new Date(),
+        expiresAt: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+      };
+      await trackingLinks.updateOne({ orderId }, { $set: link }, { upsert: true });
+      return link;
+    },
+    async findTrackedRepair(tokenHash) {
+      const link = await trackingLinks.findOne({ tokenHash, expiresAt: { $gt: new Date() } });
+      if (!link) return null;
+      return orders.findOne(
+        { _id: link.orderId, shopId: link.shopId },
+        { projection: { _id: 1, number: 1, device: 1, problem: 1, status: 1, updatedAt: 1, createdAt: 1 } },
+      );
+    },
     updateAssignment: (shopId, orderId, version, technician) =>
       orders.findOneAndUpdate(
         { _id: orderId, shopId, $or: [{ version }, { version: { $exists: false } }] },

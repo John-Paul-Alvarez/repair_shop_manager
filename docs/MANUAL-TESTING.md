@@ -1,4 +1,4 @@
-# Manual testing — Sprints 1–6
+# Manual testing — Sprints 1–7
 
 Use fictional shop and employee details. These accounts are persisted in your app's Atlas database. Application passwords are separate from the Atlas database password.
 
@@ -105,6 +105,15 @@ Seven-day expiry, concurrent acceptance, forged API permissions, and cross-shop 
 6. Add an internal repair note and choose **Save note**. Confirm the note shows its author and time. Enter another note, select **Complete repair** or **Back to my repairs**, then choose Save note, Discard note, or Cancel to verify each option behaves as labeled.
 7. Complete the repair and confirm the dialog. You should return to My assigned repairs with a completion message and updated counts.
 8. Reassign an open repair as the manager while the technician has it open. The technician’s next save should ask them to reload rather than change a repair no longer assigned to them.
+
+## Sprint 7 — customer tracking
+
+1. Sign in as a manager or front-desk employee and open a saved work order. Under **Customer access**, choose **Create tracking link** and copy the private URL.
+2. Open the URL in a private window. Confirm it shows only the customer-safe order number, device, reported issue, and status. Pending must read **Received**. Technician assignment, repair notes, and edit controls must be absent.
+3. Choose **Contact the shop**. Copy the order number, then close the dialog. No message or call should be sent by merely opening the dialog.
+4. Choose **End tracking**. You should return to the public homepage; tracking does not create a customer session.
+5. Return to Work Order Details and choose **Create replacement link**. The original URL must show the generic unavailable message; the new URL must work.
+6. Change one character in a tracking URL. It must show the same generic unavailable message and reveal no repair information.
 
 ## Loading, errors, and mobile
 

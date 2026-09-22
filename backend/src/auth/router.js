@@ -253,6 +253,33 @@ function createAccountRouter(store, production, origins) {
       }
     },
   );
+  const trackingLimit = rateLimit({
+    windowMs: 15 * 60 * 1000,
+    limit: 40,
+    standardHeaders: "draft-8",
+    legacyHeaders: false,
+    message: { error: { message: "Too many tracking attempts. Please try again later." } },
+  });
+  router.get("/tracking/:token", trackingLimit, async (request, response) => {
+    if (!/^[a-f0-9]{64}$/.test(request.params.token)) {
+      fail(response, 410, "This tracking link is unavailable. Contact the repair shop for a new link.");
+      return;
+    }
+    const repair = await store.findTrackedRepair(tokenHash(request.params.token));
+    if (!repair) {
+      fail(response, 410, "This tracking link is unavailable. Contact the repair shop for a new link.");
+      return;
+    }
+    response.json({
+      repair: {
+        number: repair.number,
+        device: repair.device,
+        problem: repair.problem,
+        status: repair.status === "Pending" ? "Received" : repair.status,
+        updatedAt: repair.updatedAt ?? repair.createdAt,
+      },
+    });
+  });
   router.use(async (request, response, next) => {
     const user = await authenticate(request);
     if (!user) {
@@ -594,6 +621,30 @@ function createAccountRouter(store, production, origins) {
       return;
     }
     response.json({ order });
+  });
+  router.post("/work-orders/:orderId/tracking-link", async (request, response) => {
+    const user = response.locals.user;
+    const shop = await store.findShop(user._id);
+    if (!shop || roleFor(shop, user._id) === "technician") {
+      fail(response, 403, "Only shop staff can create a customer tracking link.");
+      return;
+    }
+    if (Object.keys(request.body ?? {}).length) {
+      fail(response, 400, "No tracking-link fields are accepted.");
+      return;
+    }
+    const order = await store.findOrder(shop._id, request.params.orderId);
+    if (!order) {
+      fail(response, 404, "Work order not found.");
+      return;
+    }
+    const token = randomBytes(32).toString("hex");
+    const link = await store.createTrackingLink(shop._id, order._id, tokenHash(token));
+    response.status(201).json({
+      path: "/track/" + token,
+      expiresAt: link.expiresAt,
+      delivery: "manual-link",
+    });
   });
   router.get("/work-orders/:orderId/notes", async (request, response) => {
     const user = response.locals.user;

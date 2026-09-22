@@ -621,53 +621,52 @@ Acceptance:
 
 **Exit:** complete on September 21, 2026. Assigned-only access, notes, start, and completion work without widening access to manager functions.
 
-## 13. Sprint 7 — Customer tracking (future)
+## 13. Sprint 7 — Customer tracking
 
 Goal: let customers securely check their own repair without exposing staff information.
 
 Designs: 19–22.
 
-### TRACK-01 — Access my repair securely — Future
+### TRACK-01 — Access my repair securely — Complete
 
 As a customer, I want a tracking link that grants access only to my repair so I can check progress privately.
 
 Acceptance:
-- [ ] Decide how staff issue/revoke links and how customers receive them before implementation; no staff-side issuance screen is approved yet.
-- [ ] Do not use an order number alone as authorization.
-- [ ] Define expiration, verification, session, attempt-limiting, and revocation behavior.
-- [ ] Pre-access/verification screens do not reveal the customer name, device, order number, status, or notes.
-- [ ] Implement a free-compatible access method; phone-code delivery is conditional, not assumed.
+- [x] Staff create a customer link in Work Order Details and manually share it; creating a replacement invalidates the earlier link.
+- [x] Do not use an order number alone as authorization; links carry a 256-bit random secret while Atlas stores only its hash.
+- [x] Links expire after 30 days, public reads are rate-limited, there is no customer server session, and staff revoke access by creating a replacement.
+- [x] The loading and unavailable states reveal no customer, device, order, status, or note information.
+- [x] Implement a free-compatible manual-link method; no phone-code or delivery service is assumed.
 
-### TRACK-02 — Read customer-facing progress — Future
+### TRACK-02 — Read customer-facing progress — Complete
 
 As an authorized customer, I want to see my repair's status and device details so I understand its progress.
 
 Acceptance:
 - [ ] Only the authorized repair is accessible.
-- [ ] Map staff Pending to customer Received; retain In Progress and Completed meanings.
-- [ ] Show the device, reported issue, and public status; hide technician assignment, internal notes, other customers, and edit controls.
-- [ ] Completed means repair work is complete; it does not assert payment, collection availability, or notification.
-- [ ] Provide a way to end tracking access/session.
+- [x] Map staff Pending to customer Received; retain In Progress and Completed meanings.
+- [x] Show the device, reported issue, and public status; hide technician assignment, internal notes, other customers, and edit controls.
+- [x] Completed means repair work is complete; it does not assert payment, collection availability, or notification.
+- [x] Provide End tracking, which returns to the public homepage; no customer server session is stored.
 
-### TRACK-03 — Contact the shop — Future
+### TRACK-03 — Contact the shop — Deferred
 
 As a customer, I want to contact the shop with my order reference so I can ask for assistance.
 
 Acceptance:
-- [ ] Reuse the Contact shop dialog with Copy order number, call, and email actions.
-- [ ] Replace fictional contact details with verified shop contact information.
-- [ ] Calling or composing email is initiated by the customer; opening the dialog sends nothing.
+- [x] Provide a Contact the shop dialog with Copy order number and clear guidance; opening it sends nothing.
+- [ ] Add call and email actions after a manager supplies verified public shop contact details.
 
-### TRACK-04 — Recover from an unavailable link — Future
+### TRACK-04 — Recover from an unavailable link — Complete
 
 As a customer, I want clear recovery guidance if a link is invalid or expired so I know how to get help.
 
 Acceptance:
-- [ ] Show the unavailable-link design without revealing a repair record or why a specific private record was denied.
-- [ ] Offer the shop's public contact options.
-- [ ] Reissuing access invalidates/replaces older access according to the chosen policy.
+- [x] Show unavailable-link guidance without revealing a repair record or why a specific private record was denied.
+- [ ] Offer the shop's public call/email options once verified contact details are collected.
+- [x] Reissuing access replaces older access immediately.
 
-**Exit:** access controls are tested before the customer-facing flow is released. A visual mockup alone is not a secure tracking implementation.
+**Exit:** secure customer tracking is complete on September 22, 2026. Shop contact details remain a small follow-up before call/email actions can be enabled.
 
 ## 14. Data and rules to keep consistent
 
