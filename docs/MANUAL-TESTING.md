@@ -1,4 +1,4 @@
-# Manual testing — Sprints 1–5
+# Manual testing — Sprints 1–6
 
 Use fictional shop and employee details. These accounts are persisted in your app's Atlas database. Application passwords are separate from the Atlas database password.
 
@@ -94,6 +94,17 @@ Seven-day expiry, concurrent acceptance, forged API permissions, and cross-shop 
 4. Stop the backend while Work Orders is open, refresh, and verify the connection error includes **Try again**. Restart the API and retry.
 5. In two separate signed-in manager sessions, open the same repair. Save an assignment/status change in one session, then try saving from the stale session. The stale session should be asked to reload instead of overwriting the newer change.
 6. Refresh after each saved intake, assignment, and status change. The saved state must remain.
+
+## Sprint 6 — technician work
+
+1. Sign in as a manager and select **Invite staff**. Choose **Technician — assigned repairs and notes**, enter a fictional technician email, and create the private invitation link.
+2. Open the link in a private window. Create the technician account, then confirm sign-in lands on **My assigned repairs**, with no Create work order or manager controls.
+3. As the manager, create or open a repair and assign the new technician. Refresh the technician’s queue: the repair should appear only there, not in another technician’s queue.
+4. As the technician, search by its order number, device, or reported problem and use a status filter. Open the repair and confirm device/problem are visible.
+5. Choose **Start repair**. The status should become **In Progress** only after the server saves it.
+6. Add an internal repair note and choose **Save note**. Confirm the note shows its author and time. Enter another note, select **Complete repair** or **Back to my repairs**, then choose Save note, Discard note, or Cancel to verify each option behaves as labeled.
+7. Complete the repair and confirm the dialog. You should return to My assigned repairs with a completion message and updated counts.
+8. Reassign an open repair as the manager while the technician has it open. The technician’s next save should ask them to reload rather than change a repair no longer assigned to them.
 
 ## Loading, errors, and mobile
 

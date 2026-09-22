@@ -6,6 +6,7 @@ function createStore(db, prefix = "") {
   const orders = db.collection(prefix + "workOrders");
   const invitations = db.collection(prefix + "invitations");
   const technicians = db.collection(prefix + "technicians");
+  const notes = db.collection(prefix + "repairNotes");
   return {
     async initialize() {
       await users.createIndex({ email: 1 }, { unique: true });
@@ -16,6 +17,11 @@ function createStore(db, prefix = "") {
       await orders.createIndex({ shopId: 1, number: 1 }, { unique: true });
       await orders.createIndex({ shopId: 1, requestId: 1 }, { unique: true, sparse: true });
       await technicians.createIndex({ shopId: 1, name: 1 }, { unique: true });
+      await technicians.createIndex(
+        { shopId: 1, userId: 1 },
+        { unique: true, sparse: true },
+      );
+      await notes.createIndex({ shopId: 1, orderId: 1, createdAt: -1 });
       await invitations.createIndex({ shopId: 1, email: 1 }, { unique: true });
       await invitations.createIndex({ tokenHash: 1 }, { unique: true });
       await invitations.createIndex(
@@ -52,13 +58,13 @@ function createStore(db, prefix = "") {
     findSession: (id) =>
       sessions.findOne({ _id: id, expiresAt: { $gt: new Date() } }),
     deleteSession: (id) => sessions.deleteOne({ _id: id }),
-    async createInvitation(shopId, email, tokenHash, createdBy) {
+    async createInvitation(shopId, email, tokenHash, createdBy, role = "front-desk") {
       const invitation = {
         shopId,
         email,
         tokenHash,
         createdBy,
-        role: "front-desk",
+        role,
         createdAt: new Date(),
         expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
         acceptedAt: null,
@@ -82,7 +88,7 @@ function createStore(db, prefix = "") {
         ? {
             email: invitation.email,
             shopName: shop.name,
-            role: "front-desk",
+            role: invitation.role,
             expiresAt: invitation.expiresAt,
           }
         : null;
@@ -137,11 +143,23 @@ function createStore(db, prefix = "") {
             );
           const result = await shops.updateOne(
             { _id: invitation.shopId, "members.userId": { $ne: user._id } },
-            { $push: { members: { userId: user._id, role: "front-desk" } } },
+            { $push: { members: { userId: user._id, role: invitation.role } } },
             { session },
           );
           if (result.modifiedCount !== 1)
             reject(410, "This shop invitation is no longer available.");
+          if (invitation.role === "technician") {
+            await technicians.insertOne(
+              {
+                _id: randomUUID(),
+                shopId: invitation.shopId,
+                userId: user._id,
+                name: user.name,
+                createdAt: new Date(),
+              },
+              { session },
+            );
+          }
           await invitations.updateOne(
             { _id: invitation._id },
             { $set: { acceptedAt: new Date(), acceptedBy: user._id } },
@@ -171,6 +189,8 @@ function createStore(db, prefix = "") {
     },
     findTechnician: (shopId, technicianId) =>
       technicians.findOne({ _id: technicianId, shopId }),
+    findTechnicianForUser: (shopId, userId) =>
+      technicians.findOne({ shopId, userId }),
     findOrder: (shopId, orderId) => orders.findOne({ _id: orderId, shopId }),
     findOrderByRequestId: (shopId, requestId) =>
       orders.findOne({ shopId, requestId }),
@@ -238,6 +258,91 @@ function createStore(db, prefix = "") {
       }
       return counts;
     },
+    listAssignedOrders: (shopId, technicianId, query = "", status = "") =>
+      orders
+        .find(
+          {
+            shopId,
+            technicianId,
+            ...(status ? { status } : {}),
+            ...(query
+              ? {
+                  $or: [
+                    { number: { $regex: escapeRegex(query), $options: "i" } },
+                    { device: { $regex: escapeRegex(query), $options: "i" } },
+                    { problem: { $regex: escapeRegex(query), $options: "i" } },
+                  ],
+                }
+              : {}),
+          },
+          {
+            projection: {
+              _id: 1,
+              number: 1,
+              device: 1,
+              problem: 1,
+              status: 1,
+              technicianId: 1,
+              technicianName: 1,
+              version: 1,
+            },
+          },
+        )
+        .sort({ createdAt: -1, _id: -1 })
+        .limit(1000)
+        .toArray(),
+    countAssignedOrders: async (shopId, technicianId) => {
+      const rows = await orders
+        .aggregate([
+          { $match: { shopId, technicianId } },
+          { $group: { _id: "$status", count: { $sum: 1 } } },
+        ])
+        .toArray();
+      const counts = { All: 0, Pending: 0, "In Progress": 0, Completed: 0 };
+      for (const row of rows) {
+        counts[row._id] = row.count;
+        counts.All += row.count;
+      }
+      return counts;
+    },
+    findAssignedOrder: (shopId, technicianId, orderId) =>
+      orders.findOne({ _id: orderId, shopId, technicianId }),
+    startAssignedOrder: (shopId, technicianId, orderId, version) =>
+      orders.findOneAndUpdate(
+        { _id: orderId, shopId, technicianId, status: "Pending", version },
+        {
+          $set: { status: "In Progress", updatedAt: new Date() },
+          $inc: { version: 1 },
+        },
+        { returnDocument: "after" },
+      ),
+    completeAssignedOrder: (shopId, technicianId, orderId, version) =>
+      orders.findOneAndUpdate(
+        { _id: orderId, shopId, technicianId, status: "In Progress", version },
+        {
+          $set: { status: "Completed", updatedAt: new Date() },
+          $inc: { version: 1 },
+        },
+        { returnDocument: "after" },
+      ),
+    async addRepairNote(shopId, orderId, author, text) {
+      const note = {
+        _id: randomUUID(),
+        shopId,
+        orderId,
+        authorId: author._id,
+        authorName: author.name,
+        text,
+        createdAt: new Date(),
+      };
+      await notes.insertOne(note);
+      return note;
+    },
+    listRepairNotes: (shopId, orderId) =>
+      notes
+        .find({ shopId, orderId })
+        .sort({ createdAt: 1, _id: 1 })
+        .toArray(),
     updateAssignment: (shopId, orderId, version, technician) =>
       orders.findOneAndUpdate(
         { _id: orderId, shopId, $or: [{ version }, { version: { $exists: false } }] },

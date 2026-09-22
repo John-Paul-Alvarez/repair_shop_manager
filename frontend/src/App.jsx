@@ -16,6 +16,7 @@ import InviteStaffPage from "./pages/InviteStaffPage";
 import AcceptInvitationPage from "./pages/AcceptInvitationPage";
 import CreateWorkOrderPage from "./pages/CreateWorkOrderPage";
 import WorkOrderDetailsPage from "./pages/WorkOrderDetailsPage";
+import MyRepairsPage from "./pages/MyRepairsPage";
 function Gate({ children, mode }) {
   const location = useLocation();
   const { account, loading, error, refresh } = useAuth();
@@ -56,6 +57,10 @@ function Gate({ children, mode }) {
     return <Navigate to="/setup/shop" replace />;
   if (mode === "manager" && account.shop.role !== "manager")
     return <Navigate to="/work-orders" replace />;
+  if (mode === "workspace" && account.shop.role === "technician")
+    return <Navigate to="/my-repairs" replace />;
+  if (mode === "technician" && account.shop.role !== "technician")
+    return <Navigate to="/work-orders" replace />;
   return children;
 }
 function PageEffects() {
@@ -68,6 +73,7 @@ function PageEffects() {
       "/setup/shop": "Name your shop",
       "/work-orders": "Work orders",
       "/work-orders/new": "Create work order",
+      "/my-repairs": "My assigned repairs",
       "/setup/invite": "Invite your front desk",
     };
     const pageName =
@@ -76,6 +82,8 @@ function PageEffects() {
         ? "Join your shop"
         : pathname.startsWith("/work-orders/")
           ? "Work order details"
+          : pathname.startsWith("/my-repairs/")
+            ? "Repair details"
           : "Page not found");
     document.title = pageName + " — Repair Shop Manager";
     window.scrollTo({ top: 0, behavior: "instant" });
@@ -142,6 +150,22 @@ function App() {
             path="/work-orders/:orderId"
             element={
               <Gate mode="workspace">
+                <WorkOrderDetailsPage />
+              </Gate>
+            }
+          />
+          <Route
+            path="/my-repairs"
+            element={
+              <Gate mode="technician">
+                <MyRepairsPage />
+              </Gate>
+            }
+          />
+          <Route
+            path="/my-repairs/:orderId"
+            element={
+              <Gate mode="technician">
                 <WorkOrderDetailsPage />
               </Gate>
             }

@@ -574,52 +574,52 @@ Acceptance:
 
 **Exit:** the manager/front-desk first release is complete. Password recovery remains deferred until a free-compatible sender is configured. Local readiness is not a claim of public deployment; hosting remains a separate decision.
 
-## 12. Sprint 6 — Technician experience (future)
+## 12. Sprint 6 — Technician experience
 
 Goal: give technicians access to their own assignments and repair notes.
 
 Designs: 13–18.
 
-### TECH-02 — See my assignments — Future
+### TECH-02 — See my assignments — Complete
 
 As a technician, I want to see only repairs assigned to me so I can focus on my work.
 
 Acceptance:
-- [ ] Shared sign-in routes technician accounts to My Assigned Repairs.
-- [ ] Search, counts, and filters use only that technician's authorized assignments.
-- [ ] API checks prevent accessing another technician's order by changing an ID.
-- [ ] No create-order, reassignment, customer-editing, or delete controls appear.
+- [x] Shared sign-in routes technician accounts to My Assigned Repairs.
+- [x] Search, counts, and filters use only that technician's authorized assignments.
+- [x] API checks prevent accessing another technician's order by changing an ID.
+- [x] No create-order, reassignment, customer-editing, or delete controls appear.
 
-### TECH-03 — Start an assigned repair — Future
+### TECH-03 — Start an assigned repair — Complete
 
 As a technician, I want to read the device/problem and start work so the shop sees the repair is in progress.
 
 Acceptance:
-- [ ] Details shows the authorized repair's device and reported problem.
-- [ ] Starting work persists Pending → In Progress and shows success/error feedback.
-- [ ] Access is checked again if the manager reassigns the order.
+- [x] Details shows the authorized repair's device and reported problem.
+- [x] Starting work persists Pending → In Progress and shows success/error feedback.
+- [x] Access is checked again if the manager reassigns the order.
 
-### NOTES-01 — Save internal repair notes — Future
+### NOTES-01 — Save internal repair notes — Complete
 
 As a technician, I want to save repair notes so useful work details are recorded.
 
 Acceptance:
-- [ ] Distinguish unsaved text from a saved note with a clear Save note action.
-- [ ] Identify notes as internal and store author/time.
-- [ ] Leaving or attempting completion with unsaved text offers save/discard/cancel.
-- [ ] Customer endpoints never return internal notes.
+- [x] Distinguish unsaved text from a saved note with a clear Save note action.
+- [x] Identify notes as internal and store author/time.
+- [x] Leaving or attempting completion with unsaved text offers save/discard/cancel.
+- [x] Customer endpoints do not exist yet and internal notes are available only to the assigned technician API.
 
-### TECH-04 — Complete a repair — Future
+### TECH-04 — Complete a repair — Complete
 
 As a technician, I want to confirm completion and return to my list so I can move to the next job.
 
 Acceptance:
-- [ ] A confirmation precedes In Progress → Completed.
-- [ ] Cancel keeps the existing status; confirm updates only after a successful save.
-- [ ] Resolve unsaved notes first.
-- [ ] Return to My Assigned Repairs with updated status/counts and visible completion feedback.
+- [x] A confirmation precedes In Progress → Completed.
+- [x] Cancel keeps the existing status; confirm updates only after a successful save.
+- [x] Resolve unsaved notes first.
+- [x] Return to My Assigned Repairs with updated status/counts and visible completion feedback.
 
-**Exit:** assigned-only access, notes, start, and completion work without widening access to manager functions.
+**Exit:** complete on September 21, 2026. Assigned-only access, notes, start, and completion work without widening access to manager functions.
 
 ## 13. Sprint 7 — Customer tracking (future)
 

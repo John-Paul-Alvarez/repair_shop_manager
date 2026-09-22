@@ -56,7 +56,7 @@ export default function AcceptInvitationPage() {
       );
       setPassword("");
       setAccount(result);
-      navigate("/work-orders", { replace: true });
+      navigate(result.shop.role === "technician" ? "/my-repairs" : "/work-orders", { replace: true });
     } catch (error) {
       setError(error.message);
       setFields(error.fields ?? {});
@@ -107,7 +107,7 @@ export default function AcceptInvitationPage() {
               ? "Accept your invitation to join the team."
               : "Set up your account to get started."}
           </p>
-          <p className="invite-access">Access: Front-desk employee</p>
+          <p className="invite-access">Access: {invitation.role === "technician" ? "Technician" : "Front-desk employee"}</p>
           <form onSubmit={submit} noValidate aria-busy={busy}>
             {!account && (
               <FormField

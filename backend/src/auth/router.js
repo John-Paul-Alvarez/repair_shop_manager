@@ -9,6 +9,8 @@ const fail = (response, status, message, fields) =>
   response
     .status(status)
     .json({ error: { message, ...(fields ? { fields } : {}) } });
+const roleFor = (shop, userId) =>
+  shop?.members.find((member) => member.userId === userId)?.role;
 function publicState(user, shop) {
   return {
     user: { id: user._id, name: user.name, email: user.email },
@@ -287,11 +289,11 @@ function createAccountRouter(store, production, origins) {
       return;
     }
     const body = request.body ?? {};
-    if (Object.keys(body).some((key) => key !== "email")) {
+    if (Object.keys(body).some((key) => !["email", "role"].includes(key))) {
       fail(
         response,
         403,
-        "Invitations can only grant front-desk access to your own shop.",
+        "Invitations can only grant staff access to your own shop.",
       );
       return;
     }
@@ -300,6 +302,13 @@ function createAccountRouter(store, production, origins) {
     if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || email.length > 254) {
       fail(response, 400, "Enter a valid employee email.", {
         email: "Enter a valid email address.",
+      });
+      return;
+    }
+    const role = body.role === undefined ? "front-desk" : body.role;
+    if (!["front-desk", "technician"].includes(role)) {
+      fail(response, 400, "Choose front-desk or technician access.", {
+        role: "Choose a staff role.",
       });
       return;
     }
@@ -319,6 +328,7 @@ function createAccountRouter(store, production, origins) {
         email,
         tokenHash(token),
         user._id,
+        role,
       );
       response
         .status(201)
@@ -326,7 +336,7 @@ function createAccountRouter(store, production, origins) {
           path: "/invite/" + token,
           email,
           shopName: shop.name,
-          role: "front-desk",
+          role,
           expiresAt: invitation.expiresAt,
           delivery: "manual-link",
         });
@@ -382,7 +392,8 @@ function createAccountRouter(store, production, origins) {
     response.json(publicState(user, shop).shop);
   });
   router.get("/work-orders", async (request, response) => {
-    const shop = await store.findShop(response.locals.user._id);
+    const user = response.locals.user;
+    const shop = await store.findShop(user._id);
     if (!shop) {
       fail(response, 409, "Name your shop before opening work orders.");
       return;
@@ -394,6 +405,10 @@ function createAccountRouter(store, production, origins) {
       fail(response, 403, "You cannot access another shop.");
       return;
     }
+    if (roleFor(shop, user._id) === "technician") {
+      fail(response, 403, "Use My Assigned Repairs to view your work.");
+      return;
+    }
     const query = typeof request.query.q === "string" ? request.query.q.trim().slice(0, 100) : "";
     const status = typeof request.query.status === "string" ? request.query.status : "";
     if (status && !["Pending", "In Progress", "Completed"].includes(status)) {
@@ -403,9 +418,14 @@ function createAccountRouter(store, production, origins) {
     response.json({ orders: await store.listOrders(shop._id, query, status), counts: await store.countOrders(shop._id) });
   });
   router.get("/technicians", async (_request, response) => {
-    const shop = await store.findShop(response.locals.user._id);
+    const user = response.locals.user;
+    const shop = await store.findShop(user._id);
     if (!shop) {
       fail(response, 409, "Name your shop before managing technicians.");
+      return;
+    }
+    if (roleFor(shop, user._id) === "technician") {
+      fail(response, 403, "Technicians only see repairs assigned to them.");
       return;
     }
     response.json({ technicians: await store.listTechnicians(shop._id) });
@@ -442,11 +462,38 @@ function createAccountRouter(store, production, origins) {
       throw error;
     }
   });
+  router.get("/my-repairs", async (request, response) => {
+    const user = response.locals.user;
+    const shop = await store.findShop(user._id);
+    if (!shop || roleFor(shop, user._id) !== "technician") {
+      fail(response, 403, "Only technicians can view assigned repairs.");
+      return;
+    }
+    const technician = await store.findTechnicianForUser(shop._id, user._id);
+    if (!technician) {
+      fail(response, 409, "Your technician profile is not ready. Ask your manager to resend your invitation.");
+      return;
+    }
+    const query = typeof request.query.q === "string" ? request.query.q.trim().slice(0, 100) : "";
+    const status = typeof request.query.status === "string" ? request.query.status : "";
+    if (status && !["Pending", "In Progress", "Completed"].includes(status)) {
+      fail(response, 400, "Choose a valid status filter.");
+      return;
+    }
+    response.json({
+      orders: await store.listAssignedOrders(shop._id, technician._id, query, status),
+      counts: await store.countAssignedOrders(shop._id, technician._id),
+    });
+  });
   router.post("/work-orders", async (request, response) => {
     const user = response.locals.user;
     const shop = await store.findShop(user._id);
     if (!shop) {
       fail(response, 409, "Name your shop before creating a work order.");
+      return;
+    }
+    if (roleFor(shop, user._id) === "technician") {
+      fail(response, 403, "Technicians cannot create work orders.");
       return;
     }
     const body = request.body ?? {};
@@ -530,16 +577,74 @@ function createAccountRouter(store, production, origins) {
     }
   });
   router.get("/work-orders/:orderId", async (request, response) => {
-    const shop = await store.findShop(response.locals.user._id);
+    const user = response.locals.user;
+    const shop = await store.findShop(user._id);
     if (!shop) {
       fail(response, 404, "Work order not found.");
       return;
     }
-    const order = await store.findOrder(shop._id, request.params.orderId);
+    const technician = roleFor(shop, user._id) === "technician"
+      ? await store.findTechnicianForUser(shop._id, user._id)
+      : null;
+    const order = technician
+      ? await store.findAssignedOrder(shop._id, technician._id, request.params.orderId)
+      : await store.findOrder(shop._id, request.params.orderId);
     if (!order) {
       fail(response, 404, "Work order not found.");
       return;
     }
+    response.json({ order });
+  });
+  router.get("/work-orders/:orderId/notes", async (request, response) => {
+    const user = response.locals.user;
+    const shop = await store.findShop(user._id);
+    const technician = shop && roleFor(shop, user._id) === "technician"
+      ? await store.findTechnicianForUser(shop._id, user._id)
+      : null;
+    if (!technician || !(await store.findAssignedOrder(shop._id, technician._id, request.params.orderId))) {
+      fail(response, 404, "Work order not found.");
+      return;
+    }
+    response.json({ notes: await store.listRepairNotes(shop._id, request.params.orderId) });
+  });
+  router.post("/work-orders/:orderId/notes", async (request, response) => {
+    const user = response.locals.user;
+    const shop = await store.findShop(user._id);
+    const technician = shop && roleFor(shop, user._id) === "technician"
+      ? await store.findTechnicianForUser(shop._id, user._id)
+      : null;
+    if (!technician || !(await store.findAssignedOrder(shop._id, technician._id, request.params.orderId))) {
+      fail(response, 404, "Work order not found.");
+      return;
+    }
+    const body = request.body ?? {};
+    if (Object.keys(body).some((key) => key !== "text")) return fail(response, 400, "Check your repair note.");
+    const text = typeof body.text === "string" ? body.text.trim() : "";
+    if (!text || text.length > 2000) return fail(response, 400, "Enter an internal note of up to 2,000 characters.", { text: "Enter a note of up to 2,000 characters." });
+    response.status(201).json({ note: await store.addRepairNote(shop._id, request.params.orderId, user, text) });
+  });
+  router.post("/work-orders/:orderId/start", async (request, response) => {
+    const user = response.locals.user;
+    const shop = await store.findShop(user._id);
+    const technician = shop && roleFor(shop, user._id) === "technician"
+      ? await store.findTechnicianForUser(shop._id, user._id)
+      : null;
+    const version = Number(request.body?.version);
+    if (!technician || !Number.isInteger(version)) return fail(response, 403, "Only the assigned technician can start this repair.");
+    const order = await store.startAssignedOrder(shop._id, technician._id, request.params.orderId, version);
+    if (!order) return fail(response, 409, "This repair changed or is no longer assigned to you. Reload before continuing.");
+    response.json({ order });
+  });
+  router.post("/work-orders/:orderId/complete", async (request, response) => {
+    const user = response.locals.user;
+    const shop = await store.findShop(user._id);
+    const technician = shop && roleFor(shop, user._id) === "technician"
+      ? await store.findTechnicianForUser(shop._id, user._id)
+      : null;
+    const version = Number(request.body?.version);
+    if (!technician || !Number.isInteger(version)) return fail(response, 403, "Only the assigned technician can complete this repair.");
+    const order = await store.completeAssignedOrder(shop._id, technician._id, request.params.orderId, version);
+    if (!order) return fail(response, 409, "This repair changed or is no longer assigned to you. Reload before continuing.");
     response.json({ order });
   });
   router.post("/work-orders/:orderId/assignment", async (request, response) => {

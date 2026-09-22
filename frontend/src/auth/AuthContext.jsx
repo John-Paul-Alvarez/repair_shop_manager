@@ -80,5 +80,9 @@ function useAuth() {
   return value;
 }
 const destination = (account) =>
-  account.shop ? "/work-orders" : "/setup/shop";
+  !account.shop
+    ? "/setup/shop"
+    : account.shop.role === "technician"
+      ? "/my-repairs"
+      : "/work-orders";
 export { ApiError, AuthProvider, api, destination, useAuth };

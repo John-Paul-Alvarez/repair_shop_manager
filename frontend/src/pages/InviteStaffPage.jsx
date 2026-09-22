@@ -8,6 +8,7 @@ export default function InviteStaffPage() {
   const { account, setAccount } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  const [role, setRole] = useState("front-desk");
   const [error, setError] = useState("");
   const [fieldError, setFieldError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -27,7 +28,7 @@ export default function InviteStaffPage() {
     }
     setBusy(true);
     try {
-      setInvitation(await api("/invitations", { email }));
+      setInvitation(await api("/invitations", { email, role }));
     } catch (error) {
       if (error instanceof ApiError && error.status === 401) {
         setAccount(null);
@@ -54,7 +55,7 @@ export default function InviteStaffPage() {
         <section className="setup-card invite-card">
           <p className="eyebrow text-burnt">Shop setup · Optional invitation</p>
           <h1>
-            {invitation ? "Your invitation is ready" : "Invite your front desk"}
+            {invitation ? "Your invitation is ready" : "Invite a team member"}
           </h1>
           <p className="form-intro">
             Give your team access to <strong>{account.shop.name}</strong>.
@@ -65,7 +66,7 @@ export default function InviteStaffPage() {
                 For <strong>{invitation.email}</strong>
               </p>
               <p className="field-hint">
-                Access: Front-desk employee · Expires{" "}
+                Access: {invitation.role === "technician" ? "Technician" : "Front-desk employee"} · Expires{" "}
                 {new Date(invitation.expiresAt).toLocaleDateString()}
               </p>
               <label htmlFor="invitation-link">Invitation link</label>
@@ -100,7 +101,7 @@ export default function InviteStaffPage() {
                 className="text-button"
                 onClick={() => {
                   setInvitation(null);
-                  setEmail("");
+                  setEmail(""); setRole("front-desk");
                   setCopied("");
                 }}
               >
@@ -120,8 +121,15 @@ export default function InviteStaffPage() {
                   onChange={setEmail}
                   error={fieldError}
                   maxLength={254}
-                  hint="Access: Front-desk employee"
+                  hint="Choose the access this person needs."
                 />
+                <div className="form-field">
+                  <label htmlFor="employee-role">Team role</label>
+                  <select id="employee-role" value={role} onChange={(event) => setRole(event.target.value)}>
+                    <option value="front-desk">Front desk — shared queue and intake</option>
+                    <option value="technician">Technician — assigned repairs and notes</option>
+                  </select>
+                </div>
                 {error && (
                   <p role="alert" className="form-error">
                     {error}

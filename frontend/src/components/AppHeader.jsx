@@ -17,6 +17,7 @@ function AppHeader({ setup = false }) {
   const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
+  const technician = account?.shop?.role === "technician";
   async function signOut() {
     setBusy(true);
     setError("");
@@ -40,17 +41,19 @@ function AppHeader({ setup = false }) {
           {setup ? (
             <span className="app-section-label">Shop setup</span>
           ) : (
-            <Link className="app-current" to="/work-orders" aria-current="page">
-              Work orders
+            <Link className="app-current" to={technician ? "/my-repairs" : "/work-orders"} aria-current="page">
+              {technician ? "My repairs" : "Work orders"}
             </Link>
           )}
           <div className="app-user">
             <span>
               {account?.user.name}
               <small>
-                {account?.shop?.role === "front-desk"
-                  ? "Front desk"
-                  : "Shop manager"}
+                {technician
+                  ? "Technician"
+                  : account?.shop?.role === "front-desk"
+                    ? "Front desk"
+                    : "Shop manager"}
               </small>
             </span>
             <button className="text-button" onClick={signOut} disabled={busy}>

@@ -23,7 +23,7 @@ function createApp(config, checkDatabase, store) {
     config.clientOrigins,
   );
   app.use("/api", (request, response, next) => {
-    if (/^\/(auth|shops|work-orders|invitations|technicians)(\/|$)/.test(request.path))
+    if (/^\/(auth|shops|work-orders|my-repairs|invitations|technicians)(\/|$)/.test(request.path))
       accounts(request, response, next);
     else next();
   });
