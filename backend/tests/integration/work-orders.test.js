@@ -102,6 +102,21 @@ test("Sprint 3 work orders against Atlas", async (t) => {
       assert.equal(retry.status, 200);
       assert.equal((await retry.json()).order._id, created._id);
     });
+    await t.test("search, manager assignment, and explicit status saves stay shop-scoped", async () => {
+      const found = await (await send("/work-orders?q=maya", undefined, staff.cookie)).json();
+      assert.equal(found.orders.length, 3);
+      assert.equal(found.counts.All, 3);
+      assert.equal((await send("/work-orders/" + savedOrder._id + "/assignment", { technicianId: "", version: savedOrder.version }, staff.cookie)).status, 403);
+      const assigned = await send("/work-orders/" + savedOrder._id + "/assignment", { technicianId: "", version: savedOrder.version }, manager.cookie);
+      assert.equal(assigned.status, 200);
+      const afterAssignment = (await assigned.json()).order;
+      assert.equal(afterAssignment.technicianName, null);
+      const status = await send("/work-orders/" + savedOrder._id + "/status", { status: "In Progress", version: afterAssignment.version }, manager.cookie);
+      assert.equal(status.status, 200);
+      const afterStatus = (await status.json()).order;
+      assert.equal(afterStatus.status, "In Progress");
+      assert.equal((await send("/work-orders/" + savedOrder._id + "/status", { status: "Completed", version: afterAssignment.version }, manager.cookie)).status, 409);
+    });
     await t.test("foreign shop data and unauthenticated access are rejected", async () => {
       const otherTech = (await (await send("/technicians", { name: "Sam" }, other.cookie)).json()).technician;
       assert.equal((await send("/work-orders", { ...validOrder(), technicianId: otherTech._id }, staff.cookie)).status, 400);

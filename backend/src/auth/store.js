@@ -186,15 +186,28 @@ function createStore(db, prefix = "") {
         shopId,
         number: "WO-" + String(1000 + sequence.orderSequence),
         status: "Pending",
+        version: 1,
         createdAt: new Date(),
       };
       await orders.insertOne(saved);
       return saved;
     },
-    listOrders: (shopId) =>
+    listOrders: (shopId, query = "", status = "") =>
       orders
         .find(
-          { shopId },
+          {
+            shopId,
+            ...(status ? { status } : {}),
+            ...(query
+              ? {
+                  $or: [
+                    { number: { $regex: escapeRegex(query), $options: "i" } },
+                    { customerName: { $regex: escapeRegex(query), $options: "i" } },
+                    { customerPhone: { $regex: phonePattern(query), $options: "i" } },
+                  ],
+                }
+              : {}),
+          },
           {
             projection: {
               _id: 1,
@@ -204,13 +217,47 @@ function createStore(db, prefix = "") {
               problem: 1,
               technicianName: 1,
               status: 1,
+              version: 1,
             },
           },
         )
         .sort({ createdAt: -1, _id: -1 })
         .limit(1000)
         .toArray(),
+    countOrders: async (shopId) => {
+      const rows = await orders
+        .aggregate([
+          { $match: { shopId } },
+          { $group: { _id: "$status", count: { $sum: 1 } } },
+        ])
+        .toArray();
+      const counts = { All: 0, Pending: 0, "In Progress": 0, Completed: 0 };
+      for (const row of rows) {
+        counts[row._id] = row.count;
+        counts.All += row.count;
+      }
+      return counts;
+    },
+    updateAssignment: (shopId, orderId, version, technician) =>
+      orders.findOneAndUpdate(
+        { _id: orderId, shopId, $or: [{ version }, { version: { $exists: false } }] },
+        { $set: { technicianId: technician?._id ?? null, technicianName: technician?.name ?? null, updatedAt: new Date() }, $inc: { version: 1 } },
+        { returnDocument: "after" },
+      ),
+    updateStatus: (shopId, orderId, version, status) =>
+      orders.findOneAndUpdate(
+        { _id: orderId, shopId, $or: [{ version }, { version: { $exists: false } }] },
+        { $set: { status, updatedAt: new Date() }, $inc: { version: 1 } },
+        { returnDocument: "after" },
+      ),
   };
+}
+function escapeRegex(value) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+function phonePattern(value) {
+  const digits = value.replace(/\D/g, "");
+  return digits ? digits.split("").map(escapeRegex).join("\\D*") : escapeRegex(value);
 }
 function isDuplicate(error) {
   return (

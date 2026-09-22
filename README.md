@@ -2,7 +2,7 @@
 
 A repair-shop workspace built with **JavaScript**. React components use JSX; the backend runs JavaScript directly in Node.js. TypeScript is not required.
 
-The homepage, manager accounts, shop setup, staff invitation links, shared queue, and repair intake are implemented. Repair editing is a later sprint.
+The homepage, manager accounts, shop setup, staff invitation links, repair intake, search, manager filters, and manager repair updates are implemented.
 
 ## Start locally
 
@@ -90,7 +90,7 @@ The backend needs no compilation step. Local tests do not use Atlas. Integration
 
 Accounts, memberships, technician names, and work orders are saved in Atlas. Each staff account belongs to one shop; the backend derives access from that membership. Managers can invite front-desk employees and add technicians as assignment records. Technician accounts and customer tracking remain future work.
 
-The homepage still shows three clearly labeled sample orders from `frontend/src/data/sampleOrders.js`. Authenticated queues read their own shop's saved records. New work orders start as Pending and open a saved confirmation screen. No password reset, invitation email delivery, repair mutation, billing, or inventory features are claimed.
+The homepage still shows three clearly labeled sample orders from `frontend/src/data/sampleOrders.js`. Authenticated queues search only their own shop's saved records. Managers can explicitly change an order's assignment or status; front-desk staff can read and search. No password reset, invitation email delivery, billing, or inventory features are claimed.
 
 The selected homepage reference is preserved in [homepage-reference.html](docs/homepage-reference.html). The account and onboarding screens follow saved designs 13 and 23–27 with the same cream, charcoal, and burnt-orange palette.
 

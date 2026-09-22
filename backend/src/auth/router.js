@@ -394,7 +394,13 @@ function createAccountRouter(store, production, origins) {
       fail(response, 403, "You cannot access another shop.");
       return;
     }
-    response.json({ orders: await store.listOrders(shop._id) });
+    const query = typeof request.query.q === "string" ? request.query.q.trim().slice(0, 100) : "";
+    const status = typeof request.query.status === "string" ? request.query.status : "";
+    if (status && !["Pending", "In Progress", "Completed"].includes(status)) {
+      fail(response, 400, "Choose a valid status filter.");
+      return;
+    }
+    response.json({ orders: await store.listOrders(shop._id, query, status), counts: await store.countOrders(shop._id) });
   });
   router.get("/technicians", async (_request, response) => {
     const shop = await store.findShop(response.locals.user._id);
@@ -534,6 +540,36 @@ function createAccountRouter(store, production, origins) {
       fail(response, 404, "Work order not found.");
       return;
     }
+    response.json({ order });
+  });
+  router.post("/work-orders/:orderId/assignment", async (request, response) => {
+    const user = response.locals.user;
+    const shop = await store.findShop(user._id);
+    const role = shop?.members.find((member) => member.userId === user._id)?.role;
+    if (!shop || role !== "manager") return fail(response, 403, "Only your shop manager can change assignments.");
+    const body = request.body ?? {};
+    if (Object.keys(body).some((key) => !["technicianId", "version"].includes(key))) return fail(response, 400, "Check the assignment fields.");
+    const technicianId = typeof body.technicianId === "string" ? body.technicianId.trim() : "";
+    const version = Number(body.version);
+    if (!Number.isInteger(version) || version < 1) return fail(response, 400, "Reload this work order and try again.");
+    const technician = technicianId ? await store.findTechnician(shop._id, technicianId) : null;
+    if (technicianId && !technician) return fail(response, 400, "Choose a technician from this shop.", { technicianId: "That technician is not available." });
+    const order = await store.updateAssignment(shop._id, request.params.orderId, version, technician);
+    if (!order) return fail(response, 409, "This repair changed while you were viewing it. Reload before saving.");
+    response.json({ order });
+  });
+  router.post("/work-orders/:orderId/status", async (request, response) => {
+    const user = response.locals.user;
+    const shop = await store.findShop(user._id);
+    const role = shop?.members.find((member) => member.userId === user._id)?.role;
+    if (!shop || role !== "manager") return fail(response, 403, "Only your shop manager can update repair status.");
+    const body = request.body ?? {};
+    if (Object.keys(body).some((key) => !["status", "version"].includes(key))) return fail(response, 400, "Check the status fields.");
+    const status = typeof body.status === "string" ? body.status : "";
+    const version = Number(body.version);
+    if (!["Pending", "In Progress", "Completed"].includes(status) || !Number.isInteger(version) || version < 1) return fail(response, 400, "Choose a valid status and reload if needed.");
+    const order = await store.updateStatus(shop._id, request.params.orderId, version, status);
+    if (!order) return fail(response, 409, "This repair changed while you were viewing it. Reload before saving.");
     response.json({ order });
   });
   return router;

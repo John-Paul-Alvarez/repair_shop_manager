@@ -1,19 +1,28 @@
 import { useCallback, useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useNavigate, useSearchParams } from "react-router";
 import { api, ApiError, useAuth } from "../auth/AuthContext";
 import AppHeader from "../components/AppHeader";
 import StatusBadge from "../components/StatusBadge";
 function WorkOrdersPage() {
   const { account, setAccount } = useAuth();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const query = searchParams.get("q") ?? "";
+  const status = searchParams.get("status") ?? "";
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [orders, setOrders] = useState([]);
+  const [counts, setCounts] = useState({ All: 0, Pending: 0, "In Progress": 0, Completed: 0 });
   const load = useCallback(async () => {
     setLoading(true);
     setError("");
     try {
-      setOrders((await api("/work-orders")).orders);
+      const params = new URLSearchParams();
+      if (query) params.set("q", query);
+      if (status) params.set("status", status);
+      const data = await api("/work-orders" + (params.size ? "?" + params : ""));
+      setOrders(data.orders);
+      setCounts(data.counts);
     } catch (error2) {
       if (error2 instanceof ApiError && error2.status === 401) {
         setAccount(null);
@@ -27,10 +36,17 @@ function WorkOrdersPage() {
     } finally {
       setLoading(false);
     }
-  }, [navigate, setAccount]);
+  }, [navigate, query, setAccount, status]);
   useEffect(() => {
     void load();
   }, [load]);
+  const setView = (nextQuery, nextStatus = status) => {
+    const next = new URLSearchParams();
+    if (nextQuery) next.set("q", nextQuery);
+    if (nextStatus) next.set("status", nextStatus);
+    setSearchParams(next, { replace: true });
+  };
+  const returnPath = new URLSearchParams(searchParams).toString();
   return (
     <>
       <AppHeader />
@@ -51,6 +67,10 @@ function WorkOrdersPage() {
               New work order <span aria-hidden="true">＋</span>
             </Link>
           </div>
+        </div>
+        <div className="queue-controls">
+          <label className="workspace-search"><span className="sr-only">Search work orders</span><input type="search" value={query} onChange={(event) => setView(event.target.value)} placeholder="Search order, customer, or phone" /></label>
+          {account?.shop?.role === "manager" && <div className="status-filters" aria-label="Filter by status">{["", "Pending", "In Progress", "Completed"].map((item) => <button key={item || "All"} className={status === item ? "active" : ""} onClick={() => setView(query, item)}>{item || "All"} <span>{counts[item || "All"]}</span></button>)}</div>}
         </div>
         <section
           className="workspace-queue"
@@ -104,7 +124,7 @@ function WorkOrdersPage() {
                   {orders.map((order) => (
                     <tr key={order._id}>
                       <td data-label="Order" className="order-id">
-                        <Link to={"/work-orders/" + order._id}>{order.number}</Link>
+                        <Link to={"/work-orders/" + order._id + (returnPath ? "?" + returnPath : "")}>{order.number}</Link>
                       </td>
                       <td data-label="Customer" className="customer-name">
                         {order.customerName || "Not recorded"}
@@ -133,6 +153,8 @@ function WorkOrdersPage() {
                   ))}
                 </tbody>
               </table>
+            ) : query || status ? (
+              <><h2>No matching work orders</h2><p>Try another customer, phone number, order number, or status.</p><button className="button button-outline" onClick={() => setView("", "")}>Clear search and filters</button></>
             ) : (
               <>
                 <svg
@@ -157,7 +179,7 @@ function WorkOrdersPage() {
             )}
           </div>
           {!loading && !error && (
-            <div className="workspace-count">{orders.length} work orders</div>
+            <div className="workspace-count">{query || status ? `${orders.length} matching work orders · totals include all shop work orders` : `${counts.All} work orders`}</div>
           )}
         </section>
       </main>
