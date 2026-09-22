@@ -668,7 +668,53 @@ Acceptance:
 
 **Exit:** secure customer tracking is complete on September 22, 2026. Shop contact details remain a small follow-up before call/email actions can be enabled.
 
-## 14. Data and rules to keep consistent
+## 14. Sprint 8 — Shop settings and release readiness
+
+Goal: let a manager maintain the small amount of public shop information customers need, restore staff access safely, and prepare the app for a real deployment.
+
+### SHOP-02 — Maintain public shop contact details — Planned
+
+As a shop manager, I want to save our shop phone number and email address so customers know how to reach us.
+
+Acceptance:
+- [ ] Add a manager-only Shop settings page with shop name, public phone, and public email.
+- [ ] Require a valid email or phone number before enabling either contact action on a customer tracking page.
+- [ ] Validate and save only the current shop's settings; another shop cannot read or change them.
+- [ ] Explain which details customers can see. Do not expose manager account email unless it was explicitly entered as the public shop email.
+
+### TRACK-05 — Offer verified customer contact actions — Planned
+
+As a customer, I want to call or email the shop from repair tracking so I can ask for help with my order.
+
+Acceptance:
+- [ ] Show Call and Email only when the manager has saved the corresponding verified public contact detail.
+- [ ] Use normal customer-controlled `tel:` and `mailto:` links; opening the contact dialog itself sends nothing.
+- [ ] Keep Copy order number available and retain the customer-safe tracking data boundary.
+- [ ] Unavailable tracking links never reveal a private phone number, email address, or repair data.
+
+### AUTH-03 — Recover account access — Planned
+
+As staff, I want to recover access so a forgotten password does not permanently block work.
+
+Acceptance:
+- [ ] Add Forgot password and Reset password screens with generic request feedback that does not reveal whether an email has an account.
+- [ ] Store only hashed reset tokens; make tokens single-use, time-limited, and bound to the intended account.
+- [ ] Use a free-compatible configured delivery method, or clearly keep the feature unavailable until one is configured. Do not pretend an email was sent.
+- [ ] Revoke existing sessions after a successful password reset.
+
+### REL-01 — Prepare a safe deployment — Planned
+
+As a developer, I want documented production settings and checks so the app can be deployed without exposing secrets or weakening access controls.
+
+Acceptance:
+- [ ] Document required production environment variables, Atlas network access, trusted frontend origin, HTTPS cookie behavior, and start/build commands.
+- [ ] Confirm secrets remain outside Git and the deployed frontend cannot contain the database URI.
+- [ ] Run the production frontend build and API checks against the configured environment before deployment.
+- [ ] Select a free-compatible hosting plan before publishing; local readiness is not a deployment claim.
+
+**Exit:** managers can provide verified customer contact details, tracking surfaces those details safely, staff recovery has an honest delivery design, and deployment requirements are documented and tested. Publishing remains a separate action.
+
+## 15. Data and rules to keep consistent
 
 - Core records: shops, users, shop memberships, customers, technician assignment records, and work orders.
 - Invitations and server-side sessions support onboarding/access. Internal repair notes arrive in Sprint 6; tracking access records arrive in Sprint 7.
@@ -679,7 +725,7 @@ Acceptance:
 - No automatic implication that Completed means paid, collected, ready for pickup, or notified.
 - Homepage sample records stay separate from real operational data.
 
-## 15. Decisions to settle when their sprint approaches
+## 16. Decisions to settle when their sprint approaches
 
 | Decision | Needed before | Design impact |
 | --- | --- | --- |
@@ -693,7 +739,7 @@ Acceptance:
 | Where shop contact details are maintained | Sprint 7 | Supply real customer contact options |
 | Public hosting | Before deployment | No hosting provider or paid plan is selected |
 
-## 16. Definition of done
+## 17. Definition of done
 
 For each implemented story:
 
