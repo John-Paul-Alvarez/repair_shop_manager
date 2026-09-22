@@ -1,108 +1,97 @@
 # Repair Shop Manager V2
 
-The React homepage and a minimal Express backend foundation are implemented. The local backend is connected to the Shop Manager Atlas cluster using the `repair_shop_manager` database name. Application authentication is not implemented yet.
+A repair-shop workspace built with **JavaScript**. React components use JSX; the backend runs JavaScript directly in Node.js. TypeScript is not required.
 
-Sprint 0 is complete and verified. See the [Sprint 0 verification record](docs/SPRINT-0-VERIFICATION.md) for the checks performed and current limitations.
+The homepage, manager accounts, shop setup, staff invitation links, shared queue, and repair intake are implemented. Repair editing is a later sprint.
 
-## Run the homepage
+## Start locally
 
-Use Node.js 22.12 or newer. From the project root:
+Use Node.js 22.12 or newer. Open two PowerShell terminals.
+
+**Terminal 1 — backend**
 
 ```powershell
-cd frontend
+cd "C:\Users\John Paul\Downloads\jobs\softwareDevJobs\projects\repairShopManagerV2\backend"
 npm.cmd install
 npm.cmd run dev
 ```
 
-Open the local URL printed by Vite (normally `http://127.0.0.1:5173`).
+The existing local `backend/.env` contains the Atlas settings. For a fresh checkout, copy `.env.example` to `.env` only if it does not already exist, then fill in the connection string locally. Restart the backend after environment changes.
+
+**Terminal 2 — frontend**
 
 ```powershell
-npm.cmd run build       # Type-check and create a production build
-npm.cmd run typecheck   # Check TypeScript without building
-npm.cmd run preview     # Preview the production build locally
-```
-
-## Homepage scope
-
-- Floating navigation, photographic hero, attached sample repair queue, workflow section, closing banner, and footer.
-- Responsive desktop and mobile layouts using our cream, charcoal, and burnt-orange palette.
-- Searchable sample orders with Pending, In Progress, and Completed status badges.
-- Sign-in, shop creation, and new-order buttons display a notice explaining that those flows are not available yet. They do not create accounts or collect customer data.
-- The original photo, SVG icons, and Inter font are served locally by the frontend.
-
-The screenshot supplied on September 17 matches `docs/homepage-reference.html`, copied from the earlier `32-selected-homepage.html` design. That is the reference for this implementation, rather than the later alternative homepage layout.
-
-## Run the backend
-
-From the project root, in a separate terminal:
-
-```powershell
-cd backend
+cd "C:\Users\John Paul\Downloads\jobs\softwareDevJobs\projects\repairShopManagerV2\frontend"
 npm.cmd install
-# Only if backend/.env does not exist:
-Copy-Item .env.example .env
 npm.cmd run dev
 ```
 
-The API runs at `http://127.0.0.1:4000`. Check `http://127.0.0.1:4000/api/health` to confirm it is responding.
+Open [the app](http://127.0.0.1:5173). Keep both terminals running; Ctrl+C stops a server. Use the same hostname throughout your test. Vite forwards `/api` to the backend on port 4000. The [health endpoint](http://127.0.0.1:4000/api/health) should report `database: "connected"`.
 
-On a fresh checkout, local startup works with an empty `MONGODB_URI` and reports `database: "not_configured"`. If a URI is provided, startup requires a successful connection. The current local configuration has passed a live Atlas connection and ping check; this does not create collections or verify application features.
+Dependencies are already installed on the current machine, so subsequent starts only need `npm.cmd run dev` in each folder.
 
-The backend includes environment validation, MongoDB connection support, CORS for the local frontend, security headers, JSON request/error handling, and graceful shutdown. Authentication and repair-order endpoints are not implemented; the homepage still uses its local sample records.
+## Manual testing
 
-```powershell
-npm.cmd run build       # Compile the backend to dist/
-npm.cmd start           # Run the compiled backend
-npm.cmd run typecheck   # Check application TypeScript
-npm.cmd test            # Run checks without Atlas
-```
+Follow [the manual test guide](docs/MANUAL-TESTING.md) for manager registration, resumed setup, sign-in/out, invitations, employee acceptance, repair intake, and access checks.
 
-See `backend/README.md` for environment settings and the folder structure.
+Create account → Name your shop → Invite staff or skip → Work orders.
 
-## Tech stack
+The password you choose in the application is separate from your Atlas database password. Invitations use a copyable link: no email is sent. Localhost links can be tested in another browser/private window on the same computer; they are not public links for remote staff yet.
 
-React, TypeScript, Vite, and Tailwind CSS are installed for the homepage. Node.js, Express, and the MongoDB driver are configured for the backend foundation. React Router will be added when additional pages are implemented.
+## Stack — free only
 
-| Part | Technology | Purpose |
-| --- | --- | --- |
-| Frontend | React | Build pages and reusable UI components. |
-| Language | TypeScript | Add type checking to frontend and backend code. |
-| Build tool | Vite | Run the frontend development server and build the React app. |
-| Styling | Tailwind CSS | Implement our warm cream, charcoal, and burnt-orange design. |
-| Navigation | React Router | Navigate between the homepage, sign-in, work orders, and order details. |
-| Backend | Node.js + Express | Handle API requests, validation, and permissions. |
-| Database | MongoDB Atlas Free/M0 | Store shops, users, customers, technicians, and work orders. |
-| Database access | MongoDB Node.js driver | Read and write database records from the backend. |
-| Authentication | Password hashing + server-side sessions | Sign staff in and protect shop data using secure cookies. Specific libraries are still to be chosen. |
-| Version control | Git | Track project changes. |
+| Part | Technology |
+| --- | --- |
+| Language | JavaScript; JSX for React components |
+| Frontend | React, React Router, Vite |
+| Styling | Tailwind CSS and shared CSS; local Inter font and assets |
+| Backend | Node.js, Express |
+| Database | MongoDB Atlas Free/M0 and the official MongoDB driver |
+| Authentication | Node.js scrypt password hashes; opaque, server-side MongoDB sessions |
+| Protection | HttpOnly cookies, production Secure cookies, origin checks, Helmet, request limits |
+| Invitations | Random single-use links with seven-day expiry; manually shared |
+| Tests | Node.js built-in test runner |
 
-### How the parts connect
-
-```text
-React + TypeScript + Tailwind CSS
-               |
-          Express API
-          on Node.js
-               |
-     MongoDB Node.js driver
-               |
-      MongoDB Atlas Free/M0
-```
+No paid subscriptions, trials, email service, or hosting subscription. The user confirmed the dedicated repair-shop-manager cluster is Free/M0. Deployment is not part of these sprints.
 
 ## Structure
 
-See [Sprints and user stories](docs/SPRINTS-AND-USER-STORIES.md) for the planned implementation order, role-based user flows, design references, and acceptance criteria. Technician and customer self-service features are marked as future scope.
+- `frontend/src/pages/` — homepage, account forms, shop setup, invitation screens, intake, work orders, and saved details.
+- `frontend/src/components/` — reusable layout, fields, buttons, notices, and status badges.
+- `backend/src/auth/` — account and invitation routes, password handling, MongoDB data access.
+- `backend/src/config/` — environment validation and database connection.
+- `backend/tests/` — local tests; explicit Atlas integration tests in `integration/`.
+- `docs/` — designs, sprint plan, verification records, manual testing.
 
-- `frontend/` — React, TypeScript, Vite, and Tailwind CSS. React Router is planned for additional pages.
-- `backend/` — Node.js, Express, TypeScript, and the MongoDB Node.js driver.
-- `docs/` — Project notes, user flows, and design references.
+See [sprints and user stories](docs/SPRINTS-AND-USER-STORIES.md) and [implementation notes](docs/SPRINTS-1-3-IMPLEMENTATION.md).
 
-## Database and cost constraint
+## Checks
 
-Use MongoDB Atlas Free/M0. Keep this project on free tools and services; no paid subscriptions or trial-dependent services.
+From `frontend/`:
 
-The frontend and backend will run locally during development. Public hosting is still to be decided.
+```powershell
+npm.cmd run build
+npm.cmd run preview
+```
 
-Database credentials belong only in the ignored `backend/.env`, never in frontend code or Git. Restart the backend after changing this file. The frontend will communicate with the Express API, which connects to MongoDB.
+Preview uses port 5173, so stop the frontend development server first. Keep the API running.
 
-The Atlas connection is verified; registration, shop records, membership constraints, and application sessions remain Sprint 1 work. Homepage sample records are defined in `frontend/src/data/sampleOrders.ts` and are not persisted.
+From `backend/`:
+
+```powershell
+npm.cmd test
+npm.cmd run test:integration
+npm.cmd start
+```
+
+The backend needs no compilation step. Local tests do not use Atlas. Integration tests use temporary, uniquely prefixed collections in the configured app database and remove their own fixtures afterward. Do not point development tests at a production database.
+
+## Current boundaries
+
+Accounts, memberships, technician names, and work orders are saved in Atlas. Each staff account belongs to one shop; the backend derives access from that membership. Managers can invite front-desk employees and add technicians as assignment records. Technician accounts and customer tracking remain future work.
+
+The homepage still shows three clearly labeled sample orders from `frontend/src/data/sampleOrders.js`. Authenticated queues read their own shop's saved records. New work orders start as Pending and open a saved confirmation screen. No password reset, invitation email delivery, repair mutation, billing, or inventory features are claimed.
+
+The selected homepage reference is preserved in [homepage-reference.html](docs/homepage-reference.html). The account and onboarding screens follow saved designs 13 and 23–27 with the same cream, charcoal, and burnt-orange palette.
+
+Credentials belong only in the ignored `backend/.env`; never put them in frontend code or documentation.

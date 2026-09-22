@@ -10,6 +10,7 @@ function FormField({
   hint,
   maxLength,
   placeholder,
+  required = true,
 }) {
   const [show, setShow] = useState(false);
   return (
@@ -25,7 +26,7 @@ function FormField({
           autoComplete={autoComplete}
           maxLength={maxLength}
           placeholder={placeholder}
-          required
+          required={required}
           aria-invalid={!!error}
           aria-describedby={
             error ? name + "-error" : hint ? name + "-hint" : undefined

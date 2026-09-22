@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Repair Shop Manager | The Digital Workbench</title>
+<!-- Tailwind CSS v3 with Plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Custom Configuration -->
+<script data-purpose="tailwind-config">
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            cream: {
+              page: '#F5F2EC',
+              card: '#FFFEFA',
+              border: '#D8D2C8',
+            },
+            charcoal: {
+              base: '#242420',
+              surface: '#252522',
+              muted: '#656158',
+              light: '#DCDAD4',
+            },
+            burnt: {
+              DEFAULT: '#B54708',
+              hover: '#9c3c06',
+            }
+          },
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', 'monospace'],
+          }
+        }
+      }
+    }
+  </script>
+<!-- Base Custom Reset and Typography Styles -->
+<style data-purpose="custom-typography">
+    body {
+      background-color: #F5F2EC;
+      color: #242420;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+  </style>
+</head>
+<body class="bg-cream-page text-charcoal-base font-sans min-h-screen flex flex-col antialiased selection:bg-burnt/10 selection:text-burnt">
+<!-- BEGIN: FloatingNavigation -->
+<header class="w-full max-w-7xl mx-auto px-4 sm:px-6 pt-6 z-50">
+<nav aria-label="Main Navigation" class="bg-cream-card/95 backdrop-blur-sm border border-cream-border rounded-2xl px-5 sm:px-6 py-3.5 shadow-sm flex items-center justify-between">
+<!-- Left Brand Mark and Title -->
+<a class="flex items-center gap-2.5 text-charcoal-base hover:opacity-90 transition-opacity" href="#">
+<div aria-hidden="true" class="w-8 h-8 rounded-lg bg-charcoal-surface text-cream-card flex items-center justify-center border border-charcoal-base">
+<svg class="w-4 h-4 text-cream-card" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewbox="0 0 24 24">
+<path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"></path>
+</svg>
+</div>
+<span class="font-bold text-base sm:text-lg tracking-tight text-charcoal-base">Repair Shop Manager</span>
+</a>
+<!-- Middle Navigation Links (Hidden on mobile) -->
+<div class="hidden md:flex items-center gap-8 text-sm font-medium text-charcoal-muted">
+<a class="hover:text-charcoal-base transition-colors" href="#workspace">The workspace</a>
+<a class="hover:text-charcoal-base transition-colors" href="#how-it-works">How it works</a>
+</div>
+<!-- Right Action Controls -->
+<div class="flex items-center gap-3 sm:gap-5">
+<a class="text-sm font-medium text-charcoal-base hover:text-charcoal-muted transition-colors" href="#">Sign in</a>
+<a class="bg-burnt hover:bg-burnt-hover text-white px-3.5 sm:px-4 py-2 rounded-lg text-sm font-medium transition-colors shadow-sm" href="#">Create your shop</a>
+</div>
+</nav>
+</header>
+<!-- END: FloatingNavigation -->
+<!-- BEGIN: MainContent -->
+<main class="flex-grow">
+<!-- Unified Master Hero Frame: Photographic Upper + Connected Workspace Lower -->
+<section aria-labelledby="hero-heading" class="max-w-7xl mx-auto px-4 sm:px-6 pt-4 pb-12">
+<div class="rounded-3xl border border-cream-border overflow-hidden bg-cream-card shadow-sm">
+<!-- UPPER HALF: Photographic Hero Banner -->
+<div class="relative min-h-[500px] lg:h-[530px] flex items-center bg-cover bg-right" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDMTsKs5JrbtTZU_FTXModLIiHUm4pYyL9mOMxM0isRXn2AclZsyjpDtUJj-gZ2mpWL8W-6Lju8BCeG9NyfEEWD9wcftfeTZtOtHphbcjomXwBHSzT_GWS2KZnbCP6Ulkv_6eIt_o92Hk0gmdGB_rWHFDwJvd1tXLJu5bl9nnos86uX_MvzclGBfgkD6Hf10lsB5GTN16XJ4dfKZ0CSOXan1hjmC91sPOiJwQeHNKxlaQZsPS93dY_B');">
+<!-- Controlled Charcoal Matte Mask for optimal typographic contrast -->
+<div class="absolute inset-0 bg-[#1e1e1b]/95 md:bg-gradient-to-r md:from-[#1e1e1b] md:via-[#1e1e1b]/85 md:to-transparent md:w-[62%] lg:w-[52%] h-full pointer-events-none"></div>
+<!-- Hero Content Overlay Container -->
+<div class="relative z-10 w-full md:w-[62%] lg:w-[52%] px-6 sm:px-10 md:px-14 py-12 sm:py-16 flex flex-col justify-center">
+<span class="tracking-wider uppercase text-xs font-semibold text-cream-border/90 mb-3 block">
+              REPAIR SHOP MANAGEMENT
+            </span>
+<h1 class="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight text-[#FFFEFA] leading-[1.15] mb-4" id="hero-heading">
+              Less chasing updates.<br/>More repairs moving.
+            </h1>
+<p class="text-base sm:text-lg text-charcoal-light leading-relaxed max-w-md mb-8">
+              Keep your work orders, technicians, and repair progress together.
+            </p>
+<div class="flex flex-wrap items-center gap-4">
+<a class="bg-burnt hover:bg-burnt-hover text-white px-6 py-3 rounded-lg font-medium text-sm transition-colors shadow-sm inline-flex items-center justify-center" href="#">
+                Create your shop
+              </a>
+<a class="text-cream-page hover:text-white font-medium text-sm inline-flex items-center gap-1.5 transition-colors group" href="#workspace">
+<span>See the workspace</span>
+<svg class="w-4 h-4 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<path d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</a>
+</div>
+</div>
+</div>
+<!-- LOWER HALF: Connected Product Preview Table -->
+<div class="border-t border-cream-border bg-cream-card p-5 sm:p-8" id="workspace">
+<!-- Workspace Header & Action Controls -->
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-6 border-b border-cream-border/70">
+<div class="flex items-center gap-3">
+<h2 class="text-lg sm:text-xl font-semibold text-charcoal-base">Your repair queue</h2>
+<span class="text-[11px] uppercase font-mono tracking-wider px-2 py-0.5 bg-cream-page text-charcoal-muted rounded border border-cream-border font-medium">
+                SAMPLE WORKSPACE
+              </span>
+</div>
+<div class="flex items-center gap-3">
+<!-- Search Input Field -->
+<div class="relative flex-grow sm:flex-initial">
+<span class="absolute inset-y-0 left-0 flex items-center pl-2.5 pointer-events-none text-charcoal-muted">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewbox="0 0 24 24">
+<circle cx="11" cy="11" r="8"></circle>
+<path d="m21 21-4.3-4.3" stroke-linecap="round" stroke-linejoin="round"></path>
+</svg>
+</span>
+<input class="w-full sm:w-56 pl-8 pr-3 py-1.5 bg-cream-page/60 border border-cream-border rounded-md text-xs text-charcoal-muted cursor-default focus:outline-none focus:ring-0" placeholder="Search order #, customer..." readonly="" type="text"/>
+</div>
+<!-- Action Button -->
+<button class="bg-charcoal-surface hover:bg-charcoal-base text-cream-card text-xs font-medium px-3.5 py-1.5 rounded-md transition-colors whitespace-nowrap" type="button">
+                + New work order
+              </button>
+</div>
+</div>
+<!-- Tabular Queue Representation -->
+<div class="overflow-x-auto">
+<table aria-label="Repair Queue Table" class="w-full text-left text-sm border-collapse min-w-[620px]">
+<thead>
+<tr class="border-b border-cream-border/60 text-[11px] font-semibold tracking-wider text-charcoal-muted uppercase">
+<th class="py-3.5 px-3 font-semibold" scope="col">ORDER</th>
+<th class="py-3.5 px-3 font-semibold" scope="col">CUSTOMER</th>
+<th class="py-3.5 px-3 font-semibold" scope="col">DEVICE</th>
+<th class="py-3.5 px-3 font-semibold" scope="col">TECHNICIAN</th>
+<th class="py-3.5 px-3 font-semibold text-right sm:text-left" scope="col">STATUS</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-cream-border/40">
+<!-- Order Row 1 -->
+<tr class="hover:bg-cream-page/40 transition-colors">
+<td class="py-4 px-3 font-mono font-semibold text-charcoal-base text-xs sm:text-sm tracking-tight">
+                    WO-1043
+                  </td>
+<td class="py-4 px-3 font-medium text-charcoal-base">
+                    Maya Chen
+                  </td>
+<td class="py-4 px-3 text-charcoal-muted">
+                    iPhone 14 Pro
+                  </td>
+<td class="py-4 px-3 text-charcoal-muted">
+                    Alex
+                  </td>
+<td class="py-4 px-3 text-right sm:text-left">
+<span class="bg-[#F3E8FF] text-[#6B21A8] border border-[#E9D5FF] px-2.5 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1.5">
+<span aria-hidden="true" class="w-1.5 h-1.5 rounded-full bg-[#6B21A8]"></span>
+                      In Progress
+                    </span>
+</td>
+</tr>
+<!-- Order Row 2 -->
+<tr class="hover:bg-cream-page/40 transition-colors">
+<td class="py-4 px-3 font-mono font-semibold text-charcoal-base text-xs sm:text-sm tracking-tight">
+                    WO-1042
+                  </td>
+<td class="py-4 px-3 font-medium text-charcoal-base">
+                    Daniel Brooks
+                  </td>
+<td class="py-4 px-3 text-charcoal-muted">
+                    MacBook Air
+                  </td>
+<td class="py-4 px-3 text-charcoal-muted">
+                    Sam
+                  </td>
+<td class="py-4 px-3 text-right sm:text-left">
+<span class="bg-[#FEF3C7] text-[#B45309] border border-[#FDE68A] px-2.5 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1.5">
+<span aria-hidden="true" class="w-1.5 h-1.5 rounded-full bg-[#B45309]"></span>
+                      Pending
+                    </span>
+</td>
+</tr>
+<!-- Order Row 3 -->
+<tr class="hover:bg-cream-page/40 transition-colors">
+<td class="py-4 px-3 font-mono font-semibold text-charcoal-base text-xs sm:text-sm tracking-tight">
+                    WO-1039
+                  </td>
+<td class="py-4 px-3 font-medium text-charcoal-base">
+                    Sofia Martinez
+                  </td>
+<td class="py-4 px-3 text-charcoal-muted">
+                    iPad Air
+                  </td>
+<td class="py-4 px-3 text-charcoal-muted">
+                    Sam
+                  </td>
+<td class="py-4 px-3 text-right sm:text-left">
+<span class="bg-[#DCFCE7] text-[#15803D] border border-[#BBF7D0] px-2.5 py-1 rounded-full text-xs font-medium inline-flex items-center gap-1.5">
+<span aria-hidden="true" class="w-1.5 h-1.5 rounded-full bg-[#15803D]"></span>
+                      Completed
+                    </span>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+<!-- Bottom Workspace Footnote -->
+<div class="pt-4 mt-2 border-t border-cream-border/40 flex items-center justify-between">
+<p class="text-xs text-charcoal-muted">
+              Showing 3 of 3 active work orders • Illustrative shop view
+            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- BEGIN: AsymmetricWorkflowSection -->
+<section aria-labelledby="workflow-heading" class="max-w-7xl mx-auto px-4 sm:px-6 py-16 sm:py-20" id="how-it-works">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-start">
+<!-- Left Column: Contextual Overview (Approx 40%) -->
+<div class="lg:col-span-5">
+<span class="text-xs font-semibold tracking-wider text-burnt uppercase mb-3 block">
+            FROM DROP-OFF TO DONE
+          </span>
+<h2 class="text-3xl sm:text-4xl font-bold tracking-tight text-charcoal-base mb-4" id="workflow-heading">
+            Keep the next step clear.
+          </h2>
+<p class="text-base text-charcoal-muted leading-relaxed max-w-sm">
+            Give the front desk and shop manager the same view of every repair.
+          </p>
+</div>
+<!-- Right Column: Process Milestones (Approx 60%) -->
+<div class="lg:col-span-7 flex flex-col">
+<!-- Step 01 -->
+<div class="border-t border-cream-border pt-6 pb-6">
+<div class="flex items-center gap-3">
+<div aria-hidden="true" class="w-6 h-6 flex items-center justify-center text-charcoal-base">
+<svg class="w-5 h-5 stroke-[1.75]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<rect height="20" rx="2" ry="2" width="14" x="5" y="2"></rect>
+<path d="M12 18h.01"></path>
+</svg>
+</div>
+<h3 class="text-lg font-semibold text-charcoal-base tracking-tight">
+                01 — Receive the device
+              </h3>
+</div>
+<p class="text-sm text-charcoal-muted mt-1 ml-9">
+              Record the customer, device, and problem.
+            </p>
+</div>
+<!-- Step 02 -->
+<div class="border-t border-cream-border pt-6 pb-6">
+<div class="flex items-center gap-3">
+<div aria-hidden="true" class="w-6 h-6 flex items-center justify-center text-charcoal-base">
+<svg class="w-5 h-5 stroke-[1.75]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+<circle cx="12" cy="7" r="4"></circle>
+</svg>
+</div>
+<h3 class="text-lg font-semibold text-charcoal-base tracking-tight">
+                02 — Assign the repair
+              </h3>
+</div>
+<p class="text-sm text-charcoal-muted mt-1 ml-9">
+              Choose who will handle the work.
+            </p>
+</div>
+<!-- Step 03 -->
+<div class="border-t border-cream-border pt-6 pb-6">
+<div class="flex items-center gap-3">
+<div aria-hidden="true" class="w-6 h-6 flex items-center justify-center text-charcoal-base">
+<svg class="w-5 h-5 stroke-[1.75]" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"></path>
+</svg>
+</div>
+<h3 class="text-lg font-semibold text-charcoal-base tracking-tight">
+                03 — Update the status
+              </h3>
+</div>
+<p class="text-sm text-charcoal-muted mt-1 ml-9">
+              Keep progress clear when customers ask.
+            </p>
+</div>
+</div>
+</div>
+</section>
+<!-- END: AsymmetricWorkflowSection -->
+<!-- BEGIN: SimpleClosingSection -->
+<section aria-label="Get Started Banner" class="max-w-7xl mx-auto px-4 sm:px-6 mb-16">
+<div class="bg-charcoal-surface rounded-3xl border border-[#3A3A35] px-8 sm:px-12 py-12 sm:py-14 text-white flex flex-col md:flex-row items-start md:items-center justify-between gap-8">
+<!-- Statement Prompt -->
+<h2 class="text-2xl sm:text-3xl font-bold tracking-tight text-cream-card max-w-lg leading-tight">
+          Ready for a more organized repair queue?
+        </h2>
+<!-- Closing Action Cluster -->
+<div class="flex flex-col sm:flex-row sm:items-center gap-5 sm:gap-6 w-full md:w-auto">
+<a class="bg-burnt hover:bg-burnt-hover text-white px-6 py-3 rounded-lg font-medium text-sm transition-colors text-center shadow-sm" href="#">
+            Create your shop
+          </a>
+<a class="text-sm text-charcoal-light hover:text-white underline underline-offset-4 transition-colors" href="#">
+            Already have an account? Sign in
+          </a>
+</div>
+</div>
+</section>
+<!-- END: SimpleClosingSection -->
+</main>
+<!-- END: MainContent -->
+<!-- BEGIN: MinimalFooter -->
+<footer class="w-full border-t border-cream-border">
+<div class="max-w-7xl mx-auto px-4 sm:px-6 py-10 flex flex-col sm:flex-row items-center justify-between text-xs text-charcoal-muted gap-4">
+<!-- Brand & Mission statement -->
+<div class="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-3 text-center sm:text-left">
+<span class="font-semibold text-charcoal-base">Repair Shop Manager</span>
+<span aria-hidden="true" class="hidden sm:inline">•</span>
+<span>Built for the people behind every repair.</span>
+</div>
+<!-- Navigation Link -->
+<div>
+<a class="hover:text-charcoal-base transition-colors" href="#">Sign in</a>
+</div>
+</div>
+</footer>
+<!-- END: MinimalFooter -->
+</body></html>

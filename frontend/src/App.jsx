@@ -12,7 +12,12 @@ import HomePage from "./pages/HomePage";
 import AccountPage from "./pages/AccountPage";
 import ShopSetupPage from "./pages/ShopSetupPage";
 import WorkOrdersPage from "./pages/WorkOrdersPage";
+import InviteStaffPage from "./pages/InviteStaffPage";
+import AcceptInvitationPage from "./pages/AcceptInvitationPage";
+import CreateWorkOrderPage from "./pages/CreateWorkOrderPage";
+import WorkOrderDetailsPage from "./pages/WorkOrderDetailsPage";
 function Gate({ children, mode }) {
+  const location = useLocation();
   const { account, loading, error, refresh } = useAuth();
   if (loading)
     return (
@@ -34,13 +39,23 @@ function Gate({ children, mode }) {
         <Link to="/">Back to homepage</Link>
       </main>
     );
-  if (mode === "guest")
-    return account ? <Navigate to={destination(account)} replace /> : children;
+  if (mode === "guest") {
+    const token = new URLSearchParams(location.search).get("invite");
+    const target =
+      token && /^[a-f0-9]{64}$/.test(token)
+        ? "/invite/" + token
+        : account
+          ? destination(account)
+          : "/sign-in";
+    return account ? <Navigate to={target} replace /> : children;
+  }
   if (!account) return <Navigate to="/sign-in" replace />;
   if (mode === "setup" && account.shop)
     return <Navigate to="/work-orders" replace />;
-  if (mode === "workspace" && !account.shop)
+  if (["workspace", "manager"].includes(mode) && !account.shop)
     return <Navigate to="/setup/shop" replace />;
+  if (mode === "manager" && account.shop.role !== "manager")
+    return <Navigate to="/work-orders" replace />;
   return children;
 }
 function PageEffects() {
@@ -52,9 +67,14 @@ function PageEffects() {
       "/sign-in": "Sign in",
       "/setup/shop": "Name your shop",
       "/work-orders": "Work orders",
+      "/work-orders/new": "Create work order",
+      "/setup/invite": "Invite your front desk",
     };
     document.title =
-      (names[pathname] ?? "Page not found") + " — Repair Shop Manager";
+      (names[pathname] ??
+        (pathname.startsWith("/invite/")
+          ? "Join your shop"
+          : "Page not found")) + " — Repair Shop Manager";
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [pathname]);
   return null;
@@ -65,6 +85,15 @@ function App() {
       <AuthProvider>
         <PageEffects />
         <Routes>
+          <Route
+            path="/setup/invite"
+            element={
+              <Gate mode="manager">
+                <InviteStaffPage />
+              </Gate>
+            }
+          />
+          <Route path="/invite/:token" element={<AcceptInvitationPage />} />
           <Route path="/" element={<HomePage />} />
           <Route
             path="/create-account"
@@ -95,6 +124,22 @@ function App() {
             element={
               <Gate mode="workspace">
                 <WorkOrdersPage />
+              </Gate>
+            }
+          />
+          <Route
+            path="/work-orders/new"
+            element={
+              <Gate mode="workspace">
+                <CreateWorkOrderPage />
+              </Gate>
+            }
+          />
+          <Route
+            path="/work-orders/:orderId"
+            element={
+              <Gate mode="workspace">
+                <WorkOrderDetailsPage />
               </Gate>
             }
           />

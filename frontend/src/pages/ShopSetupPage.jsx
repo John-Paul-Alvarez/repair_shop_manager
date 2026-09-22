@@ -23,7 +23,7 @@ function ShopSetupPage() {
     setBusy(true);
     try {
       setAccount(await api("/shops", { name }));
-      navigate("/work-orders", { replace: true });
+      navigate("/setup/invite", { replace: true });
     } catch (error2) {
       if (error2 instanceof ApiError && error2.status === 401) {
         setAccount(null);
@@ -44,7 +44,7 @@ function ShopSetupPage() {
       <AppHeader setup />
       <main className="setup-main">
         <section className="setup-card">
-          <p className="eyebrow text-burnt">Shop setup · One last step</p>
+          <p className="eyebrow text-burnt">Shop setup · Step 1 of 2</p>
           <h1>Name your shop</h1>
           <p className="form-intro">This is the name your team will see.</p>
           <form onSubmit={submit} noValidate aria-busy={busy}>
@@ -67,7 +67,7 @@ function ShopSetupPage() {
               className="button button-primary form-submit"
               disabled={busy}
             >
-              {busy ? "Saving your shop…" : "Continue to work orders"}
+              {busy ? "Saving your shop…" : "Continue"}
               <span aria-hidden="true">→</span>
             </button>
           </form>

@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useState } from "react";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { api, ApiError, useAuth } from "../auth/AuthContext";
 import AppHeader from "../components/AppHeader";
-import FeatureNotice from "../components/FeatureNotice";
+import StatusBadge from "../components/StatusBadge";
 function WorkOrdersPage() {
   const { account, setAccount } = useAuth();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [orders, setOrders] = useState([]);
-  const [notice, setNotice] = useState(false);
   const load = useCallback(async () => {
     setLoading(true);
     setError("");
@@ -42,26 +41,38 @@ function WorkOrdersPage() {
             <h1>Work orders</h1>
             <p>Every repair, clearly in view.</p>
           </div>
-          <button
-            className="button button-primary"
-            onClick={() => setNotice(true)}
-          >
-            New work order <span aria-hidden="true">＋</span>
-          </button>
+          <div className="workspace-actions">
+            {account?.shop?.role === "manager" && (
+              <Link className="button button-outline" to="/setup/invite">
+                Invite staff
+              </Link>
+            )}
+            <Link className="button button-primary" to="/work-orders/new">
+              New work order <span aria-hidden="true">＋</span>
+            </Link>
+          </div>
         </div>
         <section
           className="workspace-queue"
           aria-label="Your shop’s work orders"
           aria-busy={loading}
         >
-          <div className="workspace-table-head" aria-hidden="true">
-            <span>Order</span>
-            <span>Customer</span>
-            <span>Device &amp; issue</span>
-            <span>Technician</span>
-            <span>Status</span>
-          </div>
-          <div className="workspace-empty">
+          {(loading || error || !orders.length) && (
+            <div className="workspace-table-head" aria-hidden="true">
+              <span>Order</span>
+              <span>Customer</span>
+              <span>Device &amp; issue</span>
+              <span>Technician</span>
+              <span>Status</span>
+            </div>
+          )}
+          <div
+            className={
+              !loading && !error && orders.length
+                ? "saved-queue"
+                : "workspace-empty"
+            }
+          >
             {loading ? (
               <p role="status">Loading your repair queue…</p>
             ) : error ? (
@@ -76,15 +87,52 @@ function WorkOrdersPage() {
                 </button>
               </>
             ) : orders.length ? (
-              <>
-                <h2>Your saved orders</h2>
-                <ul>
+              <table className="repair-table">
+                <caption className="sr-only">
+                  Saved work orders for {account.shop.name}
+                </caption>
+                <thead>
+                  <tr>
+                    <th>Order</th>
+                    <th>Customer</th>
+                    <th>Device &amp; issue</th>
+                    <th>Technician</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
                   {orders.map((order) => (
-                    <li key={order._id}>{order.number}</li>
+                    <tr key={order._id}>
+                      <td data-label="Order" className="order-id">
+                        <Link to={"/work-orders/" + order._id}>{order.number}</Link>
+                      </td>
+                      <td data-label="Customer" className="customer-name">
+                        {order.customerName || "Not recorded"}
+                      </td>
+                      <td data-label="Device & issue">
+                        {order.device || "Not recorded"}
+                        {order.problem && (
+                          <small className="order-problem">
+                            {order.problem}
+                          </small>
+                        )}
+                      </td>
+                      <td data-label="Technician">
+                        {order.technicianName || "Unassigned"}
+                      </td>
+                      <td data-label="Status">
+                        {["Pending", "In Progress", "Completed"].includes(
+                          order.status,
+                        ) ? (
+                          <StatusBadge status={order.status} />
+                        ) : (
+                          "Not recorded"
+                        )}
+                      </td>
+                    </tr>
                   ))}
-                </ul>
-                <p>Order details will be available with device intake.</p>
-              </>
+                </tbody>
+              </table>
             ) : (
               <>
                 <svg
@@ -104,10 +152,7 @@ function WorkOrdersPage() {
                 </svg>
                 <h2>No work orders yet</h2>
                 <p>Create your first work order to start tracking repairs.</p>
-                <p className="field-hint">
-                  Your shop is ready. Work order creation is coming in a later
-                  update.
-                </p>
+                <Link className="button button-primary" to="/work-orders/new">Create work order</Link>
               </>
             )}
           </div>
@@ -115,10 +160,6 @@ function WorkOrdersPage() {
             <div className="workspace-count">{orders.length} work orders</div>
           )}
         </section>
-        <FeatureNotice
-          kind={notice ? "workspace-order" : null}
-          onClose={() => setNotice(false)}
-        />
       </main>
     </>
   );
