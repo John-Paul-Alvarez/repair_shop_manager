@@ -18,6 +18,8 @@ import CreateWorkOrderPage from "./pages/CreateWorkOrderPage";
 import WorkOrderDetailsPage from "./pages/WorkOrderDetailsPage";
 import MyRepairsPage from "./pages/MyRepairsPage";
 import CustomerTrackingPage from "./pages/CustomerTrackingPage";
+import ShopSettingsPage from "./pages/ShopSettingsPage";
+import ForgotPasswordPage from "./pages/ForgotPasswordPage";
 function Gate({ children, mode }) {
   const location = useLocation();
   const { account, loading, error, refresh } = useAuth();
@@ -71,11 +73,13 @@ function PageEffects() {
       "/": "Your digital workbench",
       "/create-account": "Create account",
       "/sign-in": "Sign in",
+      "/forgot-password": "Recover account access",
       "/setup/shop": "Name your shop",
       "/work-orders": "Work orders",
       "/work-orders/new": "Create work order",
       "/my-repairs": "My assigned repairs",
       "/setup/invite": "Invite your front desk",
+      "/shop-settings": "Shop settings",
     };
     const pageName =
       names[pathname] ??
@@ -107,6 +111,14 @@ function App() {
           />
           <Route path="/invite/:token" element={<AcceptInvitationPage />} />
           <Route path="/track/:token" element={<CustomerTrackingPage />} />
+          <Route
+            path="/shop-settings"
+            element={
+              <Gate mode="manager">
+                <ShopSettingsPage />
+              </Gate>
+            }
+          />
           <Route path="/" element={<HomePage />} />
           <Route
             path="/create-account"
@@ -121,6 +133,14 @@ function App() {
             element={
               <Gate mode="guest">
                 <AccountPage key="sign-in" />
+              </Gate>
+            }
+          />
+          <Route
+            path="/forgot-password"
+            element={
+              <Gate mode="guest">
+                <ForgotPasswordPage />
               </Gate>
             }
           />

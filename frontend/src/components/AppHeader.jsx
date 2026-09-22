@@ -41,9 +41,7 @@ function AppHeader({ setup = false }) {
           {setup ? (
             <span className="app-section-label">Shop setup</span>
           ) : (
-            <Link className="app-current" to={technician ? "/my-repairs" : "/work-orders"} aria-current="page">
-              {technician ? "My repairs" : "Work orders"}
-            </Link>
+            <div className="app-nav"><Link className="app-current" to={technician ? "/my-repairs" : "/work-orders"} aria-current="page">{technician ? "My repairs" : "Work orders"}</Link>{account?.shop?.role === "manager" && <Link to="/shop-settings">Shop settings</Link>}</div>
           )}
           <div className="app-user">
             <span>

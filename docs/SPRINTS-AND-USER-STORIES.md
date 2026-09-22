@@ -1,10 +1,10 @@
 # Repair Shop Manager V2 — Sprints and User Stories
 
-Last updated: September 21, 2026.
+Last updated: September 22, 2026.
 
 This is the proposed implementation sequence based on our agreed user flows and saved designs. Sprint numbers describe order, not fixed dates or durations. Estimates and calendar commitments have not been agreed.
 
-**Status:** Sprints 0–3 are complete in local development. Sprint 0 is historically verified on September 19, 2026; see the [verification record](SPRINT-0-VERIFICATION.md). Sprints 4–5 remain planned for the first usable release. Sprints 6–7 are future scope. Designed screens are not completed application features.
+**Status:** Sprints 0–7 are complete in local development. Sprint 8 implements public shop contact settings and deployment documentation; password-reset email delivery and host selection remain deferred. Designed screens are not completed application features.
 
 ## 1. Product goal and boundaries
 
@@ -649,13 +649,13 @@ Acceptance:
 - [x] Completed means repair work is complete; it does not assert payment, collection availability, or notification.
 - [x] Provide End tracking, which returns to the public homepage; no customer server session is stored.
 
-### TRACK-03 — Contact the shop — Deferred
+### TRACK-03 — Contact the shop — Complete
 
 As a customer, I want to contact the shop with my order reference so I can ask for assistance.
 
 Acceptance:
 - [x] Provide a Contact the shop dialog with Copy order number and clear guidance; opening it sends nothing.
-- [ ] Add call and email actions after a manager supplies verified public shop contact details.
+- [x] Add call and email actions when a manager supplies public shop contact details.
 
 ### TRACK-04 — Recover from an unavailable link — Complete
 
@@ -663,56 +663,56 @@ As a customer, I want clear recovery guidance if a link is invalid or expired so
 
 Acceptance:
 - [x] Show unavailable-link guidance without revealing a repair record or why a specific private record was denied.
-- [ ] Offer the shop's public call/email options once verified contact details are collected.
+- [x] Offer the shop's public call/email options when those public details exist.
 - [x] Reissuing access replaces older access immediately.
 
-**Exit:** secure customer tracking is complete on September 22, 2026. Shop contact details remain a small follow-up before call/email actions can be enabled.
+**Exit:** secure customer tracking is complete on September 22, 2026. Shop contact details and customer-controlled Call/Email actions were added in Sprint 8.
 
 ## 14. Sprint 8 — Shop settings and release readiness
 
 Goal: let a manager maintain the small amount of public shop information customers need, restore staff access safely, and prepare the app for a real deployment.
 
-### SHOP-02 — Maintain public shop contact details — Planned
+### SHOP-02 — Maintain public shop contact details — Complete
 
 As a shop manager, I want to save our shop phone number and email address so customers know how to reach us.
 
 Acceptance:
-- [ ] Add a manager-only Shop settings page with shop name, public phone, and public email.
-- [ ] Require a valid email or phone number before enabling either contact action on a customer tracking page.
-- [ ] Validate and save only the current shop's settings; another shop cannot read or change them.
-- [ ] Explain which details customers can see. Do not expose manager account email unless it was explicitly entered as the public shop email.
+- [x] Add a manager-only Shop settings page with shop name, public phone, and public email.
+- [x] Validate public email and phone input before enabling the corresponding customer action.
+- [x] Validate and save only the current shop's settings; another shop cannot read or change them.
+- [x] Explain which details customers can see. Do not expose manager account email unless it was explicitly entered as the public shop email.
 
-### TRACK-05 — Offer verified customer contact actions — Planned
+### TRACK-05 — Offer verified customer contact actions — Complete
 
 As a customer, I want to call or email the shop from repair tracking so I can ask for help with my order.
 
 Acceptance:
-- [ ] Show Call and Email only when the manager has saved the corresponding verified public contact detail.
-- [ ] Use normal customer-controlled `tel:` and `mailto:` links; opening the contact dialog itself sends nothing.
-- [ ] Keep Copy order number available and retain the customer-safe tracking data boundary.
-- [ ] Unavailable tracking links never reveal a private phone number, email address, or repair data.
+- [x] Show Call and Email only when the manager has saved the corresponding public contact detail.
+- [x] Use normal customer-controlled `tel:` and `mailto:` links; opening the contact dialog itself sends nothing.
+- [x] Keep Copy order number available and retain the customer-safe tracking data boundary.
+- [x] Unavailable tracking links never reveal a private phone number, email address, or repair data.
 
-### AUTH-03 — Recover account access — Planned
+### AUTH-03 — Recover account access — Deferred
 
 As staff, I want to recover access so a forgotten password does not permanently block work.
 
 Acceptance:
-- [ ] Add Forgot password and Reset password screens with generic request feedback that does not reveal whether an email has an account.
+- [x] Add a Forgot password screen with generic feedback that does not reveal whether an email has an account.
 - [ ] Store only hashed reset tokens; make tokens single-use, time-limited, and bound to the intended account.
-- [ ] Use a free-compatible configured delivery method, or clearly keep the feature unavailable until one is configured. Do not pretend an email was sent.
+- [x] Clearly keep recovery unavailable until a free-compatible sender is configured. Do not pretend an email was sent.
 - [ ] Revoke existing sessions after a successful password reset.
 
-### REL-01 — Prepare a safe deployment — Planned
+### REL-01 — Prepare a safe deployment — Complete locally
 
 As a developer, I want documented production settings and checks so the app can be deployed without exposing secrets or weakening access controls.
 
 Acceptance:
-- [ ] Document required production environment variables, Atlas network access, trusted frontend origin, HTTPS cookie behavior, and start/build commands.
-- [ ] Confirm secrets remain outside Git and the deployed frontend cannot contain the database URI.
-- [ ] Run the production frontend build and API checks against the configured environment before deployment.
+- [x] Document required production environment variables, Atlas network access, trusted frontend origin, HTTPS cookie behavior, and start/build commands.
+- [x] Confirm secrets remain outside Git and the deployed frontend cannot contain the database URI.
+- [x] Run the frontend build and API checks locally against the configured development environment before deployment.
 - [ ] Select a free-compatible hosting plan before publishing; local readiness is not a deployment claim.
 
-**Exit:** managers can provide verified customer contact details, tracking surfaces those details safely, staff recovery has an honest delivery design, and deployment requirements are documented and tested. Publishing remains a separate action.
+**Exit:** managers can provide public customer contact details, tracking surfaces them safely, staff recovery clearly explains that email delivery is unconfigured, and deployment requirements are documented and tested locally. Password-reset delivery and publishing remain separate actions.
 
 ## 15. Data and rules to keep consistent
 

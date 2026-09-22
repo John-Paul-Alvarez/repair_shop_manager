@@ -41,6 +41,12 @@ function createStore(db, prefix = "") {
       return user;
     },
     findShop: (userId) => shops.findOne({ "members.userId": userId }),
+    updateShopSettings: (shopId, settings) =>
+      shops.findOneAndUpdate(
+        { _id: shopId },
+        { $set: { ...settings, updatedAt: new Date() } },
+        { returnDocument: "after" },
+      ),
     async createShop(userId, name) {
       // Shop + initial membership are saved atomically. Retrying setup returns
       // the same shop instead of creating another one.
@@ -361,10 +367,16 @@ function createStore(db, prefix = "") {
     async findTrackedRepair(tokenHash) {
       const link = await trackingLinks.findOne({ tokenHash, expiresAt: { $gt: new Date() } });
       if (!link) return null;
-      return orders.findOne(
+      const repair = await orders.findOne(
         { _id: link.orderId, shopId: link.shopId },
         { projection: { _id: 1, number: 1, device: 1, problem: 1, status: 1, updatedAt: 1, createdAt: 1 } },
       );
+      if (!repair) return null;
+      const shop = await shops.findOne(
+        { _id: link.shopId },
+        { projection: { name: 1, publicPhone: 1, publicEmail: 1 } },
+      );
+      return { repair, shop };
     },
     updateAssignment: (shopId, orderId, version, technician) =>
       orders.findOneAndUpdate(

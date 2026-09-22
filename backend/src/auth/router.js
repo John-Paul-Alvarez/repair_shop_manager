@@ -265,18 +265,23 @@ function createAccountRouter(store, production, origins) {
       fail(response, 410, "This tracking link is unavailable. Contact the repair shop for a new link.");
       return;
     }
-    const repair = await store.findTrackedRepair(tokenHash(request.params.token));
-    if (!repair) {
+    const tracked = await store.findTrackedRepair(tokenHash(request.params.token));
+    if (!tracked) {
       fail(response, 410, "This tracking link is unavailable. Contact the repair shop for a new link.");
       return;
     }
     response.json({
       repair: {
-        number: repair.number,
-        device: repair.device,
-        problem: repair.problem,
-        status: repair.status === "Pending" ? "Received" : repair.status,
-        updatedAt: repair.updatedAt ?? repair.createdAt,
+        number: tracked.repair.number,
+        device: tracked.repair.device,
+        problem: tracked.repair.problem,
+        status: tracked.repair.status === "Pending" ? "Received" : tracked.repair.status,
+        updatedAt: tracked.repair.updatedAt ?? tracked.repair.createdAt,
+      },
+      shop: {
+        name: tracked.shop?.name ?? "Repair shop",
+        ...(tracked.shop?.publicPhone ? { publicPhone: tracked.shop.publicPhone } : {}),
+        ...(tracked.shop?.publicEmail ? { publicEmail: tracked.shop.publicEmail } : {}),
       },
     });
   });
@@ -417,6 +422,35 @@ function createAccountRouter(store, production, origins) {
       return;
     }
     response.json(publicState(user, shop).shop);
+  });
+  router.get("/shop-settings", async (request, response) => {
+    const user = response.locals.user;
+    const shop = await store.findShop(user._id);
+    if (!shop || roleFor(shop, user._id) !== "manager") {
+      fail(response, 403, "Only your shop manager can open shop settings.");
+      return;
+    }
+    response.json({ name: shop.name, publicPhone: shop.publicPhone ?? "", publicEmail: shop.publicEmail ?? "" });
+  });
+  router.post("/shop-settings", async (request, response) => {
+    const user = response.locals.user;
+    const shop = await store.findShop(user._id);
+    if (!shop || roleFor(shop, user._id) !== "manager") {
+      fail(response, 403, "Only your shop manager can change shop settings.");
+      return;
+    }
+    const body = request.body ?? {};
+    if (Object.keys(body).some((key) => !["name", "publicPhone", "publicEmail"].includes(key))) return fail(response, 400, "Check the shop settings fields.");
+    const name = typeof body.name === "string" ? body.name.trim() : "";
+    const publicPhone = typeof body.publicPhone === "string" ? body.publicPhone.trim() : "";
+    const publicEmail = typeof body.publicEmail === "string" ? body.publicEmail.trim().toLowerCase() : "";
+    const fields = {};
+    if (!name || name.length > 100) fields.name = "Enter a shop name of up to 100 characters.";
+    if (publicPhone && publicPhone.length > 30) fields.publicPhone = "Use a phone number of up to 30 characters.";
+    if (publicEmail && (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(publicEmail) || publicEmail.length > 254)) fields.publicEmail = "Enter a valid public email address.";
+    if (Object.keys(fields).length) return fail(response, 400, "Check the highlighted fields.", fields);
+    const saved = await store.updateShopSettings(shop._id, { name, publicPhone, publicEmail });
+    response.json({ shop: { id: saved._id, name: saved.name, role: "manager" } });
   });
   router.get("/work-orders", async (request, response) => {
     const user = response.locals.user;

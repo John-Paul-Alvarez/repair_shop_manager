@@ -1,4 +1,4 @@
-# Manual testing — Sprints 1–7
+# Manual testing — Sprints 1–8
 
 Use fictional shop and employee details. These accounts are persisted in your app's Atlas database. Application passwords are separate from the Atlas database password.
 
@@ -115,12 +115,22 @@ Seven-day expiry, concurrent acceptance, forged API permissions, and cross-shop 
 5. Return to Work Order Details and choose **Create replacement link**. The original URL must show the generic unavailable message; the new URL must work.
 6. Change one character in a tracking URL. It must show the same generic unavailable message and reveal no repair information.
 
+## Sprint 8 — shop settings and release readiness
+
+1. Sign in as a manager. Use **Shop settings** in the header, then confirm front-desk and technician accounts cannot open `/shop-settings` directly.
+2. Update the shop name, public phone, and public email. Save and refresh. Each value should persist and the header should show the renamed shop.
+3. Leave the public phone and public email blank, save, then open a valid customer tracking link in a private window. **Contact the shop** should retain Copy order number but show no Call or Email buttons.
+4. Save a fictional public phone and email. Open the same valid tracking link again and choose **Contact the shop**. It should show Call and Email buttons. Call uses the browser's `tel:` behavior; Email opens a draft using `mailto:`. Opening the dialog alone sends nothing.
+5. Change either field and open a tracking link for a different shop. Its contacts must not appear. An invalid/replaced tracking link must reveal neither contacts nor repair data.
+6. From Sign in, choose **Forgot password?** and enter both a valid-looking test email and an unrelated email. Both must show the same message: password recovery is not configured and no email was sent.
+7. Read [deployment readiness](DEPLOYMENT.md) before selecting a host. Do not treat the local app or a successful build as a published deployment.
+
 ## Loading, errors, and mobile
 
 - Narrow the browser to a phone-sized width. Forms and buttons should remain readable without sideways page scrolling.
 - While signed in, stop the backend and refresh Work Orders. Expect an error with **Try again**, not an empty shop message. Restart the API and retry.
 - **New work order** opens the live Sprint 3 intake form. A saved repair should appear only after the confirmation screen loads.
-- Password reset is deferred until a free-compatible email sender is chosen and configured. Use a test password you can remember for now.
+- Password reset email is unavailable until a free-compatible sender is chosen and configured. Use a test password you can remember for now.
 
 ## Automated checks
 

@@ -36,6 +36,9 @@ test("Sprint 7 customer tracking against Atlas", async () => {
     };
     const managerCookie = await register("manager@example.test", "Northside");
     const otherCookie = await register("other@example.test", "Southside");
+    const settings = await send("/shop-settings", { name: "Northside Repairs", publicPhone: "555-0100", publicEmail: "hello@northside.example.test" }, managerCookie);
+    assert.equal(settings.status, 200);
+    assert.equal((await send("/shop-settings", { name: "Nope", publicPhone: "", publicEmail: "" }, otherCookie)).status, 200);
     const created = await send("/work-orders", {
       customerName: "Maya Chen", customerPhone: "555 0188", customerEmail: "maya@example.test",
       device: "iPhone 14 Pro", problem: "Screen stays black after a drop.", technicianId: "", requestId: randomUUID(),
@@ -59,6 +62,7 @@ test("Sprint 7 customer tracking against Atlas", async () => {
     });
     assert.equal("customerName" in body.repair, false);
     assert.equal("technicianName" in body.repair, false);
+    assert.deepEqual(body.shop, { name: "Northside Repairs", publicPhone: "555-0100", publicEmail: "hello@northside.example.test" });
     assert.equal((await send("/work-orders/" + order._id + "/tracking-link", {}, otherCookie)).status, 404);
     const second = await issue();
     assert.equal((await send("/tracking/" + first)).status, 410);

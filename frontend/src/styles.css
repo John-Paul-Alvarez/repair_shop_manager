@@ -1047,6 +1047,24 @@
     text-decoration: underline;
     text-underline-offset: 4px;
   }
+  .account-recovery-link {
+    margin-top: -14px;
+  }
+  .recovery-unavailable {
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    background: var(--color-surface);
+    padding: 22px;
+  }
+  .recovery-unavailable h2 {
+    margin: 0 0 8px;
+    font-size: 20px;
+  }
+  .recovery-unavailable p {
+    color: var(--color-muted);
+    line-height: 1.55;
+    margin: 0 0 18px;
+  }
   .back-home {
     display: inline-flex;
     min-height: 44px;
@@ -1065,7 +1083,7 @@
     background: var(--color-charcoal-surface);
     color: var(--color-cream-card);
   }
-  .app-header-inner {
+.app-header-inner {
     max-width: 1440px;
     margin: auto;
     display: flex;
@@ -1227,6 +1245,8 @@
     font-weight: 600;
   }
 }
+.app-nav { display: flex; align-items: center; gap: 18px; }
+.app-nav a:not(.app-current) { color: var(--color-muted); font-size: 14px; }
 @media (max-width: 1000px) {
   .account-layout {
     padding: 16px;
@@ -1522,6 +1542,7 @@
 .tracking-status p, .tracking-details p { color: var(--color-muted); line-height: 1.5; }
 .tracking-actions { margin-top: 34px; align-items: center; }
 .contact-order { background: #fbf7f0; padding: 16px; border-radius: 8px; align-items: center; margin: 24px 0; }
+.contact-actions { display: flex; flex-wrap: wrap; gap: 10px; }
 @media (max-width: 700px) { .tracking-card-public { padding: 28px 24px; } .tracking-heading, .tracking-details, .tracking-actions, .contact-order { flex-direction: column; } }
 @media (max-width:700px) { .queue-controls { align-items:stretch; flex-direction:column; } .workspace-search input { width:100%; } .details-actions { width:100%; } .details-actions .button { flex:1; } }
 @media (max-width: 700px) {

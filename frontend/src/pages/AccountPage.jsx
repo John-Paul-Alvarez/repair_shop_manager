@@ -125,6 +125,11 @@ function AccountPage({ register = false }) {
         </Link>
       </p>
       {!register && (
+        <p className="account-switch account-recovery-link">
+          <Link to="/forgot-password">Forgot password?</Link>
+        </p>
+      )}
+      {!register && (
         <p className="field-hint">
           Joining an existing shop? Open the invitation link from your manager.
         </p>

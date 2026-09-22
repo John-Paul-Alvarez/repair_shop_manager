@@ -35,6 +35,7 @@ Without a URI, health reports `not_configured` and account services return 503. 
 | POST | /api/auth/sign-in | Start session |
 | POST | /api/auth/sign-out | Revoke session and clear cookie |
 | GET | /api/auth/me | Current user and saved membership |
+| GET/POST | /api/shop-settings | Manager reads or saves this shop's public name, phone, and email |
 | POST | /api/shops | Save shop name and initial manager membership atomically |
 | GET | /api/shops/:shopId | Own shop only |
 | GET | /api/work-orders | Own shop's saved queue, up to 1,000 records |
@@ -45,8 +46,12 @@ Without a URI, health reports `not_configured` and account services return 503. 
 | POST | /api/invitations | Manager creates/replaces a front-desk invitation for an email |
 | GET | /api/invitations/:token | Valid invitation preview |
 | POST | /api/invitations/:token/accept | Join using an existing session or a new name/password |
+| GET | /api/my-repairs | Assigned technician's repair queue |
+| POST | /api/work-orders/:orderId/notes | Assigned technician saves an internal note |
+| POST | /api/work-orders/:orderId/tracking-link | Staff creates or replaces a customer tracking link |
+| GET | /api/tracking/:token | Public customer-safe repair tracking view |
 
-Mutations require an allowed Origin and application/json. Assignment and status edits are not implemented yet.
+Mutations require an allowed Origin and application/json. Manager-only assignment/status/settings actions, technician notes, and customer tracking enforce role- and shop-scoped access in the API.
 
 ## Data and access
 
@@ -58,8 +63,10 @@ Mutations require an allowed Origin and application/json. Assignment and status 
 - Session cookies carry a random 256-bit token. Only its SHA-256 hash is stored in MongoDB. Sessions expire after eight hours; every request checks expiry independently of TTL cleanup.
 - Cookies are HttpOnly and SameSite=Lax. Production uses Secure and the __Host- prefix; local HTTP development uses a regular host-only cookie.
 - Authentication attempts are rate-limited per IP in this single-process development server. A multi-instance deployment would need a shared limiter store and explicit trusted-proxy configuration.
-- Invitations store token hashes, target email, shop, fixed front-desk role, expiry, and acceptance state. Reissuing replaces the earlier link. Acceptance uses a MongoDB transaction to save the account/membership and consume the invitation together.
+- Invitations store token hashes, target email, shop, fixed role, expiry, and acceptance state. Reissuing replaces the earlier link. Acceptance uses a MongoDB transaction to save the account/membership and consume the invitation together.
 - Invitation links are bearer secrets. The manager shares them privately with the intended employee; the app does not send mail or independently verify email ownership.
+- Customer tracking links are separate expiring bearer secrets. Atlas stores only their hashes. The public route returns only the repair number, device, reported issue, customer-safe status, and manager-entered public contact fields.
+- Password recovery email is deliberately unconfigured. The frontend gives the same unavailable message for every submitted address; it does not claim a message was sent or expose account existence.
 
 ## Tests
 
@@ -68,6 +75,6 @@ npm.cmd test
 npm.cmd run test:integration
 ```
 
-Local tests cover configuration, JSON errors, CORS, health, and password hashing. Integration tests exercise real Atlas persistence, duplicate/racing requests, session revocation/expiry, cross-shop denial, role enforcement, and invitation lifecycle. Only each run's uniquely named test collections are removed afterward. Do not run against production.
+Local tests cover configuration, JSON errors, CORS, health, and password hashing. Integration tests exercise real Atlas persistence, duplicate/racing requests, session revocation/expiry, cross-shop denial, role enforcement, invitation lifecycle, technician access, and tracking. Only each run's uniquely named test collections are removed afterward. Do not run against production.
 
 See [manual testing](../docs/MANUAL-TESTING.md) and [implementation notes](../docs/SPRINTS-1-3-IMPLEMENTATION.md).
