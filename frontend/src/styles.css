@@ -1432,6 +1432,11 @@
 .details-footer p {
   color: var(--color-muted);
 }
+.save-success {
+  color: #23734b !important;
+  font-weight: 600;
+  margin-top: 8px;
+}
 .details-heading .status-badge {
   margin-top: 12px;
 }
@@ -1487,7 +1492,7 @@
 .status-filters span { opacity:.7; margin-left:3px; }
 .details-actions { display:flex; flex-wrap:wrap; gap:10px; }
 .modal-backdrop { position:fixed; inset:0; z-index:10; background:#24242099; display:grid; place-items:center; padding:20px; }
-.manager-modal { width:min(520px,100%); background:var(--color-cream-card); border-radius:14px; padding:32px; position:relative; box-shadow:0 20px 60px #0005; }
+.manager-modal { width:min(520px,100%); max-height:calc(100dvh - 40px); overflow-y:auto; background:var(--color-cream-card); border-radius:14px; padding:32px; position:relative; box-shadow:0 20px 60px #0005; }
 .manager-modal h2 { font-size:28px; letter-spacing:-.03em; margin-bottom:8px; }
 .modal-close { position:absolute; right:16px; top:14px; min-width:44px; min-height:44px; font-size:28px; color:var(--color-muted); }
 .modal-options { display:grid; gap:10px; margin:24px 0; }

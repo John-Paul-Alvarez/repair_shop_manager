@@ -1,4 +1,4 @@
-# Manual testing — Sprints 1–3
+# Manual testing — Sprints 1–5
 
 Use fictional shop and employee details. These accounts are persisted in your app's Atlas database. Application passwords are separate from the Atlas database password.
 
@@ -75,12 +75,32 @@ Seven-day expiry, concurrent acceptance, forged API permissions, and cross-shop 
 6. Refresh the details page, then return to Work Orders. The repair should still be present for staff in the same shop.
 7. Start entering an order and choose **Cancel**. The app should ask before discarding your entries.
 
+## Sprint 4 — inquiries and repair workload
+
+1. Sign in as either demo account and search for `Maya`, `WO-1001`, or `5550148`. The same work order should be found despite letter case or ordinary phone punctuation.
+2. Open the matching repair, then choose **Back to work orders**. The search should still be applied.
+3. Search for text that does not exist. The page should say **No matching work orders** and offer **Clear search and filters**. It must not show the new-shop empty state.
+4. Sign in as the manager. Use each status filter and confirm its count represents all repairs in the shop, while the footer reports matching rows for the active filter/search.
+5. Open a repair and choose **Assign technician** or **Change technician**. Select a value, then choose **Cancel**. The saved assignment should not change. Repeat and choose **Save changes**; the page should confirm the saved change.
+6. Choose **Update status**, select a status, then choose **Save changes**. Refresh the page and queue to confirm the status persists.
+7. With the dialog open, press Escape. It should close and return keyboard focus to the button that opened it. Tab should stay within the dialog while it is open.
+8. Sign in as the front-desk employee. You can search and view repair details, but assignment and status-update controls must not appear.
+
+## Sprint 5 — quality and reliability
+
+1. Use Tab to reach navigation, controls, form fields, and buttons. The focused element should have a clear orange outline.
+2. Submit blank account, shop, and work-order forms. The first invalid field should receive focus and retain valid entries.
+3. Test the queue, create-order form, and details page at a narrow browser width. Content must remain readable without horizontal page scrolling.
+4. Stop the backend while Work Orders is open, refresh, and verify the connection error includes **Try again**. Restart the API and retry.
+5. In two separate signed-in manager sessions, open the same repair. Save an assignment/status change in one session, then try saving from the stale session. The stale session should be asked to reload instead of overwriting the newer change.
+6. Refresh after each saved intake, assignment, and status change. The saved state must remain.
+
 ## Loading, errors, and mobile
 
 - Narrow the browser to a phone-sized width. Forms and buttons should remain readable without sideways page scrolling.
 - While signed in, stop the backend and refresh Work Orders. Expect an error with **Try again**, not an empty shop message. Restart the API and retry.
 - **New work order** opens the live Sprint 3 intake form. A saved repair should appear only after the confirmation screen loads.
-- Password reset is not implemented. Use a test password you can remember; the app cannot email a reset link yet.
+- Password reset is deferred until a free-compatible email sender is chosen and configured. Use a test password you can remember for now.
 
 ## Automated checks
 

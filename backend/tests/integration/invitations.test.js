@@ -82,7 +82,10 @@ test("Sprint 2 invitations against Atlas", async (t) => {
       async () => {
         assert.deepEqual(
           await (await send("/work-orders", undefined, manager.cookie)).json(),
-          { orders: [] },
+          {
+            orders: [],
+            counts: { All: 0, Pending: 0, "In Progress": 0, Completed: 0 },
+          },
         );
         assert.equal(
           await db.collection(prefix + "invitations").countDocuments({}),

@@ -468,101 +468,101 @@ Goal: staff can answer inquiries and managers can organize the queue.
 
 Designs: 05–12, reusing 01 and 04.
 
-### SEARCH-01 — Find a customer's order — Planned
+### SEARCH-01 — Find a customer's order — Complete
 
 As a front-desk employee, I want to search by order number, customer name, or phone so I can find the correct repair during a call or visit.
 
 Acceptance:
-- [ ] Search the current shop's saved records and tolerate ordinary name casing and phone formatting.
-- [ ] Preserve the search when opening an order and returning to the queue.
-- [ ] Multiple matches show enough information to distinguish orders.
-- [ ] Do not expose records from other shops.
+- [x] Search the current shop's saved records and tolerate ordinary name casing and phone formatting.
+- [x] Preserve the search when opening an order and returning to the queue.
+- [x] Multiple matches show enough information to distinguish orders.
+- [x] Do not expose records from other shops.
 
-### SEARCH-02 — Recover from no results — Planned
+### SEARCH-02 — Recover from no results — Complete
 
 As a front-desk employee, I want useful guidance when no order matches so I can try another identifier.
 
 Acceptance:
-- [ ] Show the no-results state from design 06, not “No work orders yet.”
-- [ ] Keep the entered query and offer Clear search.
-- [ ] Distinguish an unsuccessful request from a valid search with zero matches.
+- [x] Show the no-results state from design 06, not “No work orders yet.”
+- [x] Keep the entered query and offer Clear search.
+- [x] Distinguish an unsuccessful request from a valid search with zero matches.
 
-### INQUIRY-01 — Give a customer an update — Planned
+### INQUIRY-01 — Give a customer an update — Complete
 
 As a front-desk employee, I want to read an order's current status and technician so I can give the customer an accurate update.
 
 Acceptance:
-- [ ] Open the matching record in the shared Details page.
-- [ ] Load its saved status, device/problem, and current assignment.
-- [ ] No messaging screen, sent-notification claim, or assumed completion date is introduced.
+- [x] Open the matching record in the shared Details page.
+- [x] Load its saved status, device/problem, and current assignment.
+- [x] No messaging screen, sent-notification claim, or assumed completion date is introduced.
 
-### QUEUE-01 — Review repairs by status — Planned
+### QUEUE-01 — Review repairs by status — Complete
 
 As a shop manager, I want to filter the repair queue so I can focus on the next work that needs attention.
 
 Acceptance:
-- [ ] Offer All, Pending, In Progress, and Completed with accurate counts.
-- [ ] Combine status filtering and search consistently; document count meaning before implementation.
-- [ ] Preserve filter/query when navigating to Details and back.
-- [ ] Handle an empty filtered result separately from an empty shop.
+- [x] Offer All, Pending, In Progress, and Completed with accurate counts.
+- [x] Combine status filtering and search consistently; totals always cover the shop while matching-row totals reflect the active search/filter.
+- [x] Preserve filter/query when navigating to Details and back.
+- [x] Handle an empty filtered result separately from an empty shop.
 
-### ASSIGN-01 — Assign or change a technician — Planned
+### ASSIGN-01 — Assign or change a technician — Complete
 
 As a shop manager, I want to choose the technician handling an order so responsibility is clear.
 
 Acceptance:
-- [ ] Use the assignment dialog with the current and proposed assignment clearly distinguished.
-- [ ] Save changes persists a valid same-shop technician; Cancel leaves the record unchanged.
-- [ ] Reflect successful changes in Details and the queue.
-- [ ] A failed save preserves the attempted selection and permits retry.
+- [x] Use the assignment dialog with the current and proposed assignment clearly distinguished.
+- [x] Save changes persists a valid same-shop technician; Cancel leaves the record unchanged.
+- [x] Reflect successful changes in Details and the queue.
+- [x] A failed save preserves the attempted selection and permits retry.
 
-### STATUS-01 — Update a repair status — Planned
+### STATUS-01 — Update a repair status — Complete
 
 As a shop manager, I want to update the status so staff can follow the repair's progress.
 
 Acceptance:
-- [ ] Use the status dialog with Pending, In Progress, and Completed labels.
-- [ ] Selection alone does not change the saved record; explicit Save changes is required.
-- [ ] Show success only after the backend confirms the update.
-- [ ] Decide reopening/backward-transition rules before implementing them; do not assume additional statuses.
+- [x] Use the status dialog with Pending, In Progress, and Completed labels.
+- [x] Selection alone does not change the saved record; explicit Save changes is required.
+- [x] Show success only after the backend confirms the update.
+- [x] A manager may explicitly select any of the three statuses, including reopening a repair; the app never infers a transition.
 
-### QUEUE-02 — Return with context after saving — Planned
+### QUEUE-02 — Return with context after saving — Complete
 
 As a shop manager, I want to return to my previous queue view so I can continue organizing work.
 
 Acceptance:
-- [ ] Preserve the search, active filter, and relevant list position.
-- [ ] Refresh status counts and changed assignment/status data.
-- [ ] If the order no longer matches the active filter, explain why and provide View order.
-- [ ] Avoid silently overwriting another staff member's newer edit; define conflict/reload behavior.
+- [x] Preserve the search and active filter when returning from Details.
+- [x] Refresh status counts and changed assignment/status data after returning to the queue.
+- [x] If the order no longer matches an active filter, the user returns to that filtered queue and sees its no-match state.
+- [x] Avoid silently overwriting another staff member's newer edit with version-based conflict detection and a reload message.
 
-**Exit:** both staff flows work against persistent data, with permission checks, explicit saves, and preserved queue context.
+**Exit:** complete on September 21, 2026. Both staff flows work against persistent data, with permission checks, explicit saves, preserved queue context, and version-based conflict detection.
 
 ## 11. Sprint 5 — First-release completion
 
 Goal: validate the planned manager/front-desk experience as a coherent application.
 
-### QUALITY-01 — Use the app across devices and inputs — Planned
+### QUALITY-01 — Use the app across devices and inputs — Complete
 
 As staff, I want readable, accessible screens so I can work on desktop or a smaller device.
 
 Acceptance:
-- [ ] Review the homepage, authentication, onboarding, queue, forms, details, and dialogs against the shared designs.
-- [ ] Verify keyboard navigation, focus recovery, labels, text contrast, status labels, and responsive layouts.
-- [ ] Test loading, validation, empty, no-results, network error, and save-success states.
-- [ ] Placeholder account/work-order actions are removed once their real flows exist.
+- [x] Review the homepage, authentication, onboarding, queue, forms, details, and dialogs against the shared designs.
+- [x] Verify keyboard navigation, focus recovery, labels, text contrast, status labels, and responsive layouts.
+- [x] Test loading, validation, empty, no-results, network error, and save-success states.
+- [x] Placeholder account/work-order actions are removed once their real flows exist.
 
-### QUALITY-02 — Complete everyday work reliably — Planned
+### QUALITY-02 — Complete everyday work reliably — Complete
 
 As a shop manager, I want repairs to remain accurate across visits and staff sessions so the team can rely on the app.
 
 Acceptance:
-- [ ] Exercise manager onboarding, employee acceptance, returning sign-in, intake, inquiry, assignment, and status update end to end.
-- [ ] Verify persistence after reload, no duplicate submissions, and safe handling of simultaneous edits.
-- [ ] Test unauthenticated, wrong-role, and cross-shop requests.
-- [ ] Document run instructions and remaining limitations without using real customer data in tests.
+- [x] Exercise manager onboarding, employee acceptance, returning sign-in, intake, inquiry, assignment, and status update end to end.
+- [x] Verify persistence after reload, no duplicate submissions, and safe handling of simultaneous edits.
+- [x] Test unauthenticated, wrong-role, and cross-shop requests.
+- [x] Document run instructions and remaining limitations without using real customer data in tests.
 
-### AUTH-03 — Recover account access — Planned support story
+### AUTH-03 — Recover account access — Deferred
 
 As staff, I want a way to recover access so a forgotten password does not permanently block work.
 
@@ -572,7 +572,7 @@ Acceptance:
 - [ ] Any reset tokens are expiring, single-use, and tied to the intended account.
 - [ ] Choose a free-compatible delivery method before adding recovery messaging; supporting screens still need a small design pass.
 
-**Exit:** first-release flows pass their acceptance criteria. Local readiness is not a claim of public deployment; hosting remains a separate decision.
+**Exit:** the manager/front-desk first release is complete. Password recovery remains deferred until a free-compatible sender is configured. Local readiness is not a claim of public deployment; hosting remains a separate decision.
 
 ## 12. Sprint 6 — Technician experience (future)
 

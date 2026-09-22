@@ -207,7 +207,10 @@ test("Sprint 1 against Atlas", async (t) => {
       async () => {
         assert.deepEqual(
           await (await request("/work-orders", { cookie: aliceCookie })).json(),
-          { orders: [] },
+          {
+            orders: [],
+            counts: { All: 0, Pending: 0, "In Progress": 0, Completed: 0 },
+          },
         );
         assert.equal(
           (await (await request("/auth/me", { cookie: aliceCookie })).json())

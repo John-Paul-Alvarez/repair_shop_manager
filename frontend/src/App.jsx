@@ -70,11 +70,14 @@ function PageEffects() {
       "/work-orders/new": "Create work order",
       "/setup/invite": "Invite your front desk",
     };
-    document.title =
-      (names[pathname] ??
-        (pathname.startsWith("/invite/")
-          ? "Join your shop"
-          : "Page not found")) + " — Repair Shop Manager";
+    const pageName =
+      names[pathname] ??
+      (pathname.startsWith("/invite/")
+        ? "Join your shop"
+        : pathname.startsWith("/work-orders/")
+          ? "Work order details"
+          : "Page not found");
+    document.title = pageName + " — Repair Shop Manager";
     window.scrollTo({ top: 0, behavior: "instant" });
   }, [pathname]);
   return null;
