@@ -1341,8 +1341,8 @@
 /* Landing page — the marketing page uses the same warm workshop palette as the app. */
 .landing-page { background:#f8f5ef; overflow:hidden; }
 .landing-hero { min-height:720px; position:relative; isolation:isolate; background:#f7f2e9; }
-.landing-hero-photo { position:absolute; inset:0; z-index:-2; width:100%; height:100%; object-fit:cover; object-position:center; opacity:.52; }
-.landing-hero::after { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,#faf7f1 0%,#faf7f1 39%,#faf7f1c7 57%,#faf7f11c 100%); }
+.landing-hero-photo { position:absolute; inset:0; z-index:-2; width:100%; height:100%; object-fit:cover; object-position:center; opacity:.62; }
+.landing-hero::after { content:""; position:absolute; inset:0; z-index:-1; background:linear-gradient(90deg,#faf7f1 0%,#faf7f1 38%,#faf7f1bf 56%,#faf7f121 100%); }
 .landing-header,.landing-hero-content,.landing-section,.landing-value-strip,.landing-footer { width:min(1360px,calc(100% - 64px)); margin-inline:auto; }
 .landing-header { height:76px; display:flex; align-items:center; justify-content:space-between; gap:28px; background:#fffefaef; border-radius:0 0 12px 12px; padding:0 18px 0 14px; box-shadow:0 1px 10px #2b24110f; }
 .landing-brand { display:flex; align-items:center; gap:9px; font-size:17px; font-weight:750; letter-spacing:-.04em; white-space:nowrap; }
@@ -1364,8 +1364,8 @@
 .landing-watch { display:inline-flex; align-items:center; justify-content:center; min-height:52px; border:1px solid var(--color-cream-border); background:#fffefa; border-radius:8px; padding:0 18px; font-size:14px; font-weight:600; }
 .landing-hero-copy small { display:block; color:var(--color-muted); font-size:12px; margin:21px 0; }
 .landing-hero-copy small b { color:#ee9d15; font-size:16px; letter-spacing:2px; margin-right:9px; }
-.landing-hero-product { min-height:530px; position:relative; display:flex; justify-content:flex-end; align-items:center; padding-left:22px; }
-.landing-workspace { display:grid; grid-template-columns:170px minmax(0,1fr); overflow:hidden; width:100%; max-width:720px; border:8px solid #262421; border-radius:16px; background:#fffefa; box-shadow:0 30px 50px #2c21193b; }
+.landing-hero-product { min-height:530px; position:relative; display:flex; justify-content:flex-end; align-items:center; padding-left:22px; transform:translateY(8px); }
+.landing-workspace { display:grid; grid-template-columns:170px minmax(0,1fr); overflow:hidden; width:100%; max-width:720px; border:8px solid #262421; border-radius:16px; background:#fffefa; box-shadow:0 30px 50px #2c21194d; }
 .landing-workspace aside { background:#252522; padding:18px 13px; color:#e8e4dc; display:flex; flex-direction:column; gap:11px; font-size:10px; }
 .landing-workspace aside b { color:#fff; font-size:10px; margin-bottom:12px; }
 .landing-workspace aside strong { background:var(--color-burnt); color:white; border-radius:5px; padding:9px; font-weight:500; }
