@@ -1,0 +1,186 @@
+.hp {
+  --hp-orange: #b54708;
+  --hp-ink: #101212;
+  --hp-muted: #626570;
+  color: var(--hp-ink);
+  background: #f5f2ec;
+  min-height: 100vh;
+}
+
+/* The reference is a 940 × 419 hero followed by a compact benefit strip. */
+.hp-hero {
+  position: relative;
+  width: 100%;
+  max-width: 1920px;
+  aspect-ratio: 940 / 419;
+  margin-inline: auto;
+  overflow: hidden;
+  isolation: isolate;
+  background: #faf7f0;
+}
+.hp-scene {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  z-index: -1;
+}
+.hp-header {
+  display: flex;
+  align-items: center;
+  position: absolute;
+  top: 2.35%;
+  left: 6.6%;
+  right: 1.35%;
+  height: 6.65%;
+  gap: 1.5vw;
+}
+.hp-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: .9vw;
+  font-size: clamp(14px, 1.62vw, 29px);
+  font-weight: 750;
+  letter-spacing: -.065em;
+  white-space: nowrap;
+  line-height: 1;
+}
+.hp-brand b { color: var(--hp-orange); font-weight: 750; }
+.hp-brand-icon {
+  display: grid;
+  place-items: center;
+  width: 2.65vw;
+  height: 2.85vw;
+  max-width: 51px;
+  max-height: 55px;
+  background: var(--hp-orange);
+  border-radius: .48vw;
+  color: white;
+}
+.hp-brand-icon svg { width: 70%; height: 70%; }
+.hp-nav {
+  display: flex;
+  gap: 2.85vw;
+  margin-left: auto;
+  margin-right: auto;
+  align-items: center;
+}
+.hp-nav button { font-size: clamp(10px, 1.04vw, 19px); min-height: 28px; }
+.hp-nav button:hover { color: var(--hp-orange); }
+.hp-account { display: flex; align-items: center; gap: .8vw; }
+.hp-start, .hp-signin, .hp-demo {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.2vw;
+  border-radius: .65vw;
+  font-size: clamp(12px, 1.42vw, 26px);
+  font-weight: 650;
+  text-decoration: none;
+  line-height: 1;
+  min-height: 3.95vw;
+  transition: background-color .15s ease, box-shadow .15s ease;
+}
+.hp-start { background: var(--hp-orange); color: white; padding: 0 2.3vw; box-shadow: 0 2px 3px #77360512; }
+.hp-start:hover { background: #933b07; }
+.hp-start svg { width: 1.55vw; height: 1.55vw; }
+.hp-signin { background: #fffefa; border: 1px solid #d8d2c8; }
+.hp-signin, .hp-start-small { min-height: 2.95vw; padding: 0 1.28vw; border-radius: .5vw; font-size: clamp(10px, 1vw, 18px); }
+.hp-start-small { gap: .55vw; }
+.hp-start-small svg { width: 1.2vw; height: 1.2vw; }
+.hp-copy { position: absolute; left: 6.6%; top: 19.9%; width: 40.4%; }
+.hp-eyebrow { text-transform: uppercase; letter-spacing: .17em; color: #8b8175; font-size: clamp(8px, .86vw, 16px); font-weight: 600; line-height: 1.3; margin: 0; }
+.hp-copy h1 { font-size: clamp(30px, 3.88vw, 74px); font-weight: 800; line-height: 1.04; letter-spacing: -.065em; margin: .72vw 0 1.05vw; }
+.hp-copy h1 > span { display: block; white-space: nowrap; }
+.hp-copy h1 em { font-style: normal; color: var(--hp-orange); }
+.hp-description { color: var(--hp-muted); font-size: clamp(11px, 1.23vw, 23px); font-weight: 400; line-height: 1.53; letter-spacing: -.02em; margin: 0 0 1.45vw; }
+.hp-actions { display: flex; gap: 1.55vw; }
+.hp-demo { padding: 0 1.8vw; background: #fffefaeb; border: 1px solid #d8d2c8; gap: .9vw; font-size: clamp(12px, 1.25vw, 24px); }
+.hp-demo:hover, .hp-signin:hover { background: #f1ece3; }
+.hp-demo svg { width: 2vw; height: 2vw; }
+.hp-team { display: flex; align-items: center; gap: 1.25vw; margin-top: 2.2vw; }
+.hp-role-icons { display: flex; flex-shrink: 0; padding-left: 0; }
+.hp-role-icons > span { display: grid; place-items: center; width: 2.8vw; height: 2.8vw; border: .18vw solid #fffefa; border-radius: 50%; background: #252522; color: #fffefa; margin-left: -.6vw; box-shadow: 0 1px 3px #25252220; }
+.hp-role-icons > span:first-child { margin-left: 0; background: #96744e; }
+.hp-role-icons > span:nth-child(2) { background: #b54708; }
+.hp-role-icons > span:nth-child(3) { background: #66518a; }
+.hp-role-icons svg { width: 57%; height: 57%; }
+.hp-team strong { display: flex; align-items: center; gap: .4vw; font-size: clamp(9px, .98vw, 18px); font-weight: 600; }
+.hp-team strong svg { width: 1.2vw; height: 1.2vw; color: var(--hp-orange); }
+.hp-team p { color: var(--hp-muted); font-size: clamp(9px, 1.02vw, 19px); margin: .25vw 0 0; }
+.hp-benefits { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; background: #fffefa; padding: 1.4vw 3.8vw 1.4vw; border-top: 1px solid #e7dfd580; max-width: 1920px; margin-inline: auto; }
+.hp-benefits article { display: flex; gap: 1.3vw; padding: 0 1.6vw; align-items: center; border-left: 1px solid #dedad4; min-width: 0; }
+.hp-benefits article:first-child { border-left: 0; padding-left: .6vw; }
+.hp-benefits article:last-child { padding-right: 0; }
+.hp-benefit-icon { width: 4.85vw; height: 5.4vw; max-width: 92px; max-height: 104px; display: grid; place-items: center; flex: 0 0 auto; background: linear-gradient(135deg,#fff,#f7f6f2); border: 1px solid #efede8; border-radius: 50%; }
+.hp-benefit-icon svg { width: 67%; height: 67%; stroke-width: 1.9; }
+.hp-benefit-people { border-color: transparent; background: transparent; }
+.hp-benefit-people svg { width: 83%; height: 83%; }
+.hp-benefits h2 { font-size: clamp(10px, 1.12vw, 21px); font-weight: 650; line-height: 1.25; letter-spacing: -.045em; margin: 0 0 .4vw; }
+.hp-benefits p { font-size: clamp(9px, .99vw, 19px); line-height: 1.4; letter-spacing: -.025em; color: var(--hp-muted); margin: 0; }
+.hp-mobile-menu { display: none; }
+
+.hp-dialog { position: fixed; inset: 0; margin: auto; width: min(1000px, calc(100% - 32px)); max-height: calc(100dvh - 40px); overflow: auto; border: 1px solid #d8d2c8; border-radius: 14px; padding: 28px; background: #fffefa; color: #242420; box-shadow: 0 24px 80px #0003; }
+.hp-dialog::backdrop { background: #252522b3; backdrop-filter: blur(3px); }
+.hp-dialog-header { display: flex; justify-content: space-between; gap: 20px; align-items: flex-start; }
+.hp-dialog-header h2 { font-size: clamp(22px, 3vw, 30px); letter-spacing: -.04em; margin: 8px 0 0; }
+.hp-dialog-header button { display: grid; place-items: center; width: 44px; height: 44px; flex-shrink: 0; border-radius: 50%; background: #f5f2ec; }
+.hp-dialog-header svg { width: 22px; height: 22px; }
+.hp-dialog-intro { color: #656158; margin: 14px 0 22px; }
+.hp-info { display: grid; gap: 18px; margin-top: 24px; }
+.hp-info article { padding: 18px; border: 1px solid #e7e1d7; border-radius: 8px; background: #faf7f1; }
+.hp-info h3 { font-size: 18px; margin-bottom: 7px; font-weight: 600; }
+.hp-info p { color: #656158; line-height: 1.6; }
+.hp-dialog .queue-preview { border: 1px solid #e7e1d7; border-radius: 10px; }
+
+@media (min-width: 1921px) {
+  .hp-header { gap: 28px; }.hp-brand { gap: 17px; }.hp-nav { gap: 54px; }
+  .hp-copy h1 { margin: 14px 0 20px; }.hp-description { margin-bottom: 28px; }
+  .hp-start,.hp-demo { min-height: 76px; padding-inline: 40px; gap: 20px; border-radius: 12px; }
+  .hp-start svg { width: 30px; height: 30px; }.hp-demo svg { width: 38px; height: 38px; }
+  .hp-start-small,.hp-signin { min-height: 56px; padding-inline: 24px; font-size: 18px; }
+  .hp-team { margin-top: 42px; gap: 24px; }.hp-role-icons > span { width: 54px; height: 54px; margin-left: -11px; border-width: 3px; }
+  .hp-team strong svg { width: 23px; height: 23px; }.hp-team p { margin-top: 5px; }
+  .hp-benefits { padding: 30px 73px 33px; }.hp-benefits article { gap: 24px; padding-inline: 30px; }.hp-benefits h2 { margin-bottom: 7px; }
+}
+
+@media (max-width: 760px) {
+  .hp-hero { aspect-ratio: auto; min-height: 0; padding-bottom: 48%; background: #faf7f0; }
+  .hp-scene { top: auto; bottom: 0; height: auto; width: 165%; max-width: none; left: -65%; object-fit: contain; z-index: -1; }
+  .hp-hero::after { content: ""; position: absolute; bottom: 42vw; left: 0; right: 0; height: 15vw; background: linear-gradient(#faf7f0, #faf7f000); z-index: -1; }
+  .hp-header { position: relative; left: auto; right: auto; top: auto; height: 66px; padding: 0 20px; gap: 12px; }
+  .hp-brand { gap: 8px; font-size: 16px; letter-spacing: -.055em; }
+  .hp-brand-icon { width: 27px; height: 29px; border-radius: 5px; }
+  .hp-nav, .hp-start-small { display: none; }
+  .hp-account { margin-left: auto; }
+  .hp-signin { min-height: 36px; padding: 0 12px; font-size: 12px; border-radius: 5px; }
+  .hp-mobile-menu { display: block; position: relative; }
+  .hp-mobile-menu summary { display: grid; place-items: center; width: 36px; height: 36px; cursor: pointer; border-radius: 5px; }
+  .hp-mobile-menu summary::-webkit-details-marker { display: none; }
+  .hp-mobile-menu summary svg { width: 22px; height: 22px; }
+  .hp-mobile-menu nav { position: absolute; right: 0; top: 42px; padding: 8px; min-width: 170px; background: #fffefa; border: 1px solid #d8d2c8; border-radius: 8px; box-shadow: 0 5px 25px #25252220; z-index: 5; }
+  .hp-mobile-menu nav button { display: block; width: 100%; padding: 12px; text-align: left; font-size: 14px; }
+  .hp-copy { position: relative; left: auto; top: auto; width: auto; margin: 25px 24px 0; padding-bottom: 32%; }
+  .hp-eyebrow { font-size: 9px; }
+  .hp-copy h1 { font-size: clamp(29px, 6.85vw, 48px); margin: 10px 0 15px; line-height: 1.06; }
+  .hp-description { max-width: 430px; font-size: 14px; line-height: 1.6; margin: 0 0 19px; }
+  .hp-desktop-break { display: none; }
+  .hp-actions { gap: 12px; }
+  .hp-start, .hp-demo { min-height: 46px; padding: 0 22px; gap: 12px; border-radius: 6px; font-size: 14px; }
+  .hp-start svg { width: 18px; height: 18px; }.hp-demo svg { width: 22px; height: 22px; }
+  .hp-team { gap: 12px; margin-top: 22px; }
+  .hp-role-icons > span { width: 28px; height: 28px; border-width: 2px; margin-left: -7px; }
+  .hp-team strong { font-size: 10px; gap: 4px; }.hp-team strong svg { width: 13px; height: 13px; }
+  .hp-team p { font-size: 10px; margin-top: 3px; }
+  .hp-benefits { grid-template-columns: 1fr 1fr; padding: 20px 14px; gap: 22px 0; }
+  .hp-benefits article { align-items: flex-start; gap: 9px; padding: 0 10px; }
+  .hp-benefits article:nth-child(3) { border: 0; padding-left: .6vw; }
+  .hp-benefit-icon { width: 35px; height: 40px; }
+  .hp-benefits h2 { font-size: 11px; margin-bottom: 5px; }.hp-benefits p { font-size: 10px; line-height: 1.45; }
+  .hp-dialog { padding: 20px; }.hp-dialog .queue-controls { flex-direction: column; align-items: stretch; }
+}
+@media (max-width: 370px) {
+  .hp-header { padding-inline: 12px; gap: 6px; }.hp-brand { font-size: 14px; }.hp-copy { margin-inline: 18px; }
+  .hp-start,.hp-demo { padding-inline: 16px; }.hp-role-icons > span { width: 24px; height: 24px; }
+}

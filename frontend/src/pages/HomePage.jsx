@@ -1,98 +1,112 @@
-import { Link } from "react-router";
+import { useEffect, useRef, useState } from "react";
+import { Link, useNavigate } from "react-router";
+import RepairQueuePreview from "../components/RepairQueuePreview";
+import "./HomePage.css";
 
-const orders = [
-  ["WO-1043", "Maya Chen", "iPhone 14 Pro", "In Progress"],
-  ["WO-1042", "Daniel Brooks", "MacBook Air", "Pending"],
-  ["WO-1039", "Sofia Martinez", "iPad Air", "Completed"],
+function HeroIcon({ name, ...props }) {
+  const paths = {
+    wrench: <path d="m14 6 4 4m-3-7a6 6 0 0 0-7 8L3 17a2.8 2.8 0 0 0 4 4l6-6a6 6 0 0 0 8-7l-4 4-5-5 3-4Z" />,
+    arrow: <><path d="M4 12h15m-5-5 5 5-5 5" /></>,
+    play: <><circle cx="12" cy="12" r="10" fill="currentColor" stroke="none" /><path d="m10 8 6 4-6 4Z" fill="white" stroke="none" /></>,
+    people: <><circle cx="12" cy="6" r="3" /><circle cx="4" cy="10" r="2.5" /><circle cx="20" cy="10" r="2.5" /><path d="M7 22v-6a5 5 0 0 1 10 0v6H7Zm-1-8a4 4 0 0 0-5 4v4h4m13-8a4 4 0 0 1 5 4v4h-4" /></>,
+    link: <><path d="m10 7 3-3a5 5 0 0 1 7 7l-3 3m-3 3-3 3a5 5 0 0 1-7-7l3-3m1 6 8-8" /></>,
+    shield: <><path d="m12 2 8 3v6c0 5-4 9-8 11-4-2-8-6-8-11V5l8-3Z" /><path d="m8 12 3 3 5-6" /></>,
+    shop: <><path d="M4 10v11h16V10M3 9l2-6h14l2 6M3 9a3 3 0 0 0 6 0 3 3 0 0 0 6 0 3 3 0 0 0 6 0H3Zm6 12v-6h6v6M6 1h12" /></>,
+    user: <><circle cx="12" cy="8" r="4" /><path d="M4 22v-3a8 8 0 0 1 16 0v3" /></>,
+    check: <path d="m5 12 4 4L19 6" />,
+    close: <path d="m6 6 12 12M6 18 18 6" />,
+    menu: <path d="M4 6h16M4 12h16M4 18h16" />,
+  };
+  return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>{paths[name]}</svg>;
+}
+
+const benefits = [
+  { icon: "people", title: "Role-based workflows", text: "Built for managers, front desk, technicians, and customers." },
+  { icon: "link", title: "Private customer tracking", text: "Keep customers informed with secure, private links." },
+  { icon: "shield", title: "Secure & private", text: "Session-based authentication and hashed tracking tokens." },
+  { icon: "shop", title: "Shop-scoped data", text: "Your data, your shop. Records stay separate." },
 ];
 
-const features = [
-  ["✦", "Create and manage work orders", "Capture the customer, device, and reported problem in one clear intake flow.", "form"],
-  ["⌘", "Assign technicians and track progress", "Keep repair ownership clear and see the current status from one queue.", "assignment"],
-  ["▤", "Internal repair notes", "Technicians save repair context without exposing it to customers.", "notes"],
-  ["↗", "Secure customer tracking links", "Share a private, expiring link so customers can check their repair.", "tracking"],
-  ["⚙", "Public shop settings", "Choose the shop name, phone, and email customers can use.", "settings"],
-  ["⌂", "Shop-scoped records", "Every work order and staff role stays isolated to the right shop.", "isolation"],
-];
+const information = {
+  Features: [
+    ["Receive a device", "Record the customer, device, and reported problem in a work order."],
+    ["Organize the repair", "Assign a technician, search the queue, and update the repair status."],
+    ["Keep everyone informed", "Save internal repair notes and share a private customer tracking link."],
+  ],
+  Roles: [
+    ["Shop manager", "Set up the shop, invite staff, assign repairs, and manage shop contact details."],
+    ["Front desk", "Create work orders and find the latest repair status to answer customer inquiries."],
+    ["Technician", "Work on assigned repairs, save internal notes, and update progress."],
+    ["Customer", "Open a private tracking link to check one repair and contact the shop."],
+  ],
+  Security: [
+    ["Private staff sessions", "Passwords are hashed with scrypt. Staff access requires an authenticated server-side session."],
+    ["Separate shop records", "The API checks shop membership and role before allowing access to repair records."],
+    ["Expiring tracking links", "Customer links expire after 30 days. Replacing a link disables the previous one. Only token hashes are stored."],
+  ],
+};
 
-function CTA({ to = "/create-account", children, dark = false }) {
+export default function HomePage() {
+  const [panel, setPanel] = useState(null);
+  const dialog = useRef(null);
+  const menu = useRef(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    if (panel && !dialog.current.open) dialog.current.showModal();
+    if (!panel && dialog.current.open) dialog.current.close();
+  }, [panel]);
+
+  function openPanel(name) {
+    if (menu.current) menu.current.open = false;
+    setPanel(name);
+  }
+
   return (
-    <Link className={`button ${dark ? "button-dark" : "button-primary"}`} to={to}>
-      {children} <span aria-hidden="true">→</span>
-    </Link>
-  );
-}
-
-function Status({ children }) {
-  return <span className={`landing-status ${children.toLowerCase().replace(" ", "-")}`}>{children}</span>;
-}
-
-function WorkspacePreview({ compact = false }) {
-  return (
-    <div className={`landing-workspace ${compact ? "compact" : ""}`}>
-      <aside>
-        <b>⌕ Repair Shop Manager</b>
-        <strong>▦ &nbsp; Dashboard</strong>
-        <span>☷ &nbsp; Work orders</span>
-        <span>◉ &nbsp; Technicians</span>
-        <span>⚙ &nbsp; Shop settings</span>
-      </aside>
-      <div className="landing-workspace-main">
-        <div className="landing-search">⌕ &nbsp; Search customers, devices, or work orders… <b>JP</b></div>
-        <div className="landing-workspace-title"><h3>Work Orders</h3><button>+ New work order</button></div>
-        <div className="landing-tabs">All (3) <span>Pending (1)</span><span>In Progress (1)</span><span>Completed (1)</span></div>
-        <div className="landing-order-list">
-          {orders.map(([number, customer, device, status]) => <div key={number}><b>{number}</b><span>{customer}</span><span>{device}</span><i>●</i><Status>{status}</Status></div>)}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function PhonePreview() {
-  return (
-    <div className="landing-phone">
-      <i className="landing-speaker" />
-      <small>Repair Shop Manager</small><h3>Track your repair</h3>
-      <p>Use your private tracking link to view repair progress.</p>
-      <div>WO-1043</div><button>View repair</button>
-      <ol><li><i /> <b>Received</b><span>Sep 12, 10:45 AM</span></li><li><i /> <b>In Progress</b><span>Screen replacement started</span></li><li><i /> <b>Completed</b><span>Your repair is complete</span></li></ol>
-    </div>
-  );
-}
-
-function FeatureVisual({ kind }) {
-  if (kind === "form") return <div className="landing-form"><b>New work order</b><label>Customer <span>Maya Chen</span></label><label>Device <span>iPhone 14 Pro</span></label><label>Reported problem <span>Cracked screen</span></label><button>Create work order</button></div>;
-  if (kind === "assignment") return <div className="landing-assignment"><div><i>MC</i><p><b>Maya Chen</b><span>Screen replacement</span></p><Status>In Progress</Status></div><div><i>SB</i><p><b>Sam Brooks</b><span>Charging port</span></p><Status>Pending</Status></div></div>;
-  if (kind === "notes") return <div className="landing-notes"><b>Notes <span>3</span></b><em>Activity</em><p>Screen heavily cracked. Customer approved replacement.</p><small>Alex · Just now</small></div>;
-  if (kind === "tracking") return <div className="landing-track"><small>yourshop.com/track/WO-1043</small><div><i /><i /><i /><i /></div><span>Received</span><span>In Progress</span><span>Completed</span></div>;
-  if (kind === "settings") return <div className="landing-settings"><p>Northside Repairs <b>Public name</b></p><p>555-0100 <b>Public phone</b></p><p>hello@northside.example <b>Public email</b></p></div>;
-  return <div className="landing-isolation"><b>Shop A</b><span>Work orders · staff · customers</span><hr /><b>Shop B</b><span>Separate and protected</span></div>;
-}
-
-function HomePage() {
-  return (
-    <div className="landing-page" id="top">
+    <div className="hp" id="top">
       <a className="skip-link" href="#main">Skip to content</a>
-      <section className="landing-hero">
-        <img className="landing-hero-photo" src="/images/repair-shop-hero.png" alt="Technician repairing a smartphone at a workshop bench." fetchPriority="high" />
-        <header className="landing-header">
-          <Link className="landing-brand" to="/"><span>⌕</span> Repair Shop Manager <b>V2</b></Link>
-          <nav aria-label="Main navigation"><a href="#features">Features</a><a href="#roles">Roles</a><a href="#security">Security</a><a href="#demo">Demo</a></nav>
-          <div><Link className="landing-sign-in" to="/sign-in">Sign in</Link><CTA>Create your shop</CTA></div>
-        </header>
-        <main id="main" className="landing-hero-content">
-          <div className="landing-hero-copy"><p>Built for independent repair shops</p><h1>Manage every repair from <em>drop-off to done.</em></h1><h2>A clear repair workflow for phones, laptops, tablets, and consoles. Keep your shop organized and your customers informed.</h2><div><CTA>Create your shop</CTA><a className="landing-watch" href="#demo">● &nbsp; See how it works</a></div><small><b>★★★★★</b> Built for the people behind every repair.</small></div>
-          <div className="landing-hero-product"><WorkspacePreview /><PhonePreview /></div>
-        </main>
-      </section>
-      <section className="landing-value-strip">{[["♧","Role-based workflows","Built for managers, front desk, technicians, and customers."],["↗","Private customer tracking","Keep customers informed with secure, expiring links."],["♜","Secure and private","Session-based authentication and hashed tracking tokens."],["⌂","Shop-scoped data","Your data stays in your shop, fully isolated and secure."]].map(([icon,title,text]) => <div key={title}><i>{icon}</i><p><b>{title}</b><span>{text}</span></p></div>)}</section>
-      <section className="landing-section landing-features" id="features"><div className="landing-section-heading"><div><p>Powerful features</p><h2>Everything you need to run a modern repair shop.</h2></div><span>From intake to completion, Repair Shop Manager gives you the tools to stay organized, work faster, and deliver a better customer experience.</span></div><div className="landing-feature-grid">{features.map(([icon,title,text,kind]) => <article key={title}><div><i>{icon}</i><h3>{title}</h3><p>{text}</p></div><FeatureVisual kind={kind} /></article>)}</div></section>
-      <section className="landing-roles" id="roles"><div className="landing-section"><div className="landing-section-heading"><div><p>Built for every role</p><h2>A better workflow for everyone in your shop.</h2></div><span>Different roles. One connected workflow. Everyone has the tools they need to do their best work.</span></div><div className="landing-role-grid">{[["♛","Manager",["Oversee shop activity","Assign technicians","Manage shop settings"]],["▣","Front desk",["Create work orders","Find repair updates","Handle device drop-off"]],["⌁","Technician",["View assigned repairs","Save internal notes","Complete repair work"]],["●","Customer",["Track one repair","See safe status updates","Contact the shop"]]].map(([icon,title,points]) => <article key={title}><i>{icon}</i><h3>{title}</h3><ul>{points.map((point) => <li key={point}>✓ {point}</li>)}</ul></article>)}</div></div></section>
-      <section className="landing-section landing-security" id="security"><div className="landing-security-copy"><p>Serious about security</p><h2>Your data stays in your hands.</h2><span>We built the app so shop operations and customer information remain protected and isolated.</span></div><div className="landing-security-grid">{[["▣","Secure sessions","Server-side sessions with secure cookie handling."],["◌","Scrypt password hashing","Passwords are securely hashed before storage."],["◉","Hashed tracking tokens","Customer tracking secrets are never stored as plain text."],["♜","Shop isolation","Work orders and customer data stay inside the right shop."]].map(([icon,title,text]) => <article key={title}><i>{icon}</i><div><b>{title}</b><span>{text}</span></div></article>)}</div></section>
-      <section className="landing-section landing-demo" id="demo"><div className="landing-demo-copy"><p>See it in action</p><h2>A closer look at the experience.</h2><span>Designed for real repair shops and everyday work.</span><a className="button button-primary" href="#top">Back to top <b>↑</b></a></div><div className="landing-demo-cards"><article><small>Customer tracking page</small><h3>Track your repair</h3><PhonePreview /></article><article><small>Technician workspace</small><h3>Assigned repair details</h3><WorkspacePreview compact /></article></div></section>
-      <footer className="landing-footer"><img src="/images/repair-shop-hero.png" alt="" /><div><p>Ready to streamline your repair shop?</p><h2>Get started with Repair Shop Manager V2.</h2><span>Set up your shop and keep repairs moving with confidence.</span></div><div><CTA>Create your shop</CTA><Link to="/sign-in">Already have an account? Sign in</Link></div></footer>
+      <main id="main">
+        <section className="hp-hero" aria-labelledby="hp-title">
+          <img className="hp-scene" src="/images/landing-top-workshop.png" alt="Illustrative repair queue on a laptop and private repair tracking on a phone, on a sunlit workshop bench." width="1880" height="836" fetchPriority="high" />
+          <header className="hp-header">
+            <Link className="hp-brand" to="/" aria-label="Repair Shop Manager V2 home">
+              <span className="hp-brand-icon"><HeroIcon name="wrench" /></span>
+              <span>Repair Shop Manager <b>V2</b></span>
+            </Link>
+            <nav className="hp-nav" aria-label="Main navigation">
+              {["Features", "Roles", "Security", "Demo"].map((name) => <button key={name} onClick={() => openPanel(name)}>{name}</button>)}
+            </nav>
+            <div className="hp-account">
+              <Link className="hp-signin" to="/sign-in">Sign in</Link>
+              <Link className="hp-start hp-start-small" to="/create-account">Start free <HeroIcon name="arrow" /></Link>
+            </div>
+            <details className="hp-mobile-menu" ref={menu}>
+              <summary aria-label="Open navigation"><HeroIcon name="menu" /></summary>
+              <nav aria-label="Mobile navigation">{["Features", "Roles", "Security", "Demo"].map((name) => <button key={name} onClick={() => openPanel(name)}>{name}</button>)}</nav>
+            </details>
+          </header>
+          <div className="hp-copy">
+            <p className="hp-eyebrow">Built for independent repair shops</p>
+            <h1 id="hp-title"><span>Manage every repair</span><span>from <em>drop-off to done.</em></span></h1>
+            <p className="hp-description">A clear, all-in-one repair workflow for phones,<br className="hp-desktop-break" /> laptops, game consoles, and more. Keep your shop organized,<br className="hp-desktop-break" /> your customers informed, and your team working together.</p>
+            <div className="hp-actions">
+              <Link className="hp-start" to="/create-account">Start free <HeroIcon name="arrow" /></Link>
+              <button className="hp-demo" onClick={() => openPanel("Demo")}><HeroIcon name="play" /> Explore demo</button>
+            </div>
+            <div className="hp-team">
+              <div className="hp-role-icons" aria-hidden="true">{["shop", "user", "wrench", "user"].map((name, i) => <span key={i}><HeroIcon name={name} /></span>)}</div>
+              <div><strong><HeroIcon name="check" /> One workspace. Four connected roles.</strong><p>Built for the people behind every repair.</p></div>
+            </div>
+          </div>
+        </section>
+        <section className="hp-benefits" aria-label="Why Repair Shop Manager">
+          {benefits.map(({ icon, title, text }) => <article key={title}><span className={`hp-benefit-icon hp-benefit-${icon}`}><HeroIcon name={icon} /></span><div><h2>{title}</h2><p>{text}</p></div></article>)}
+        </section>
+      </main>
+      <dialog className="hp-dialog" ref={dialog} onCancel={() => setPanel(null)} onClose={() => setPanel(null)} aria-labelledby="hp-dialog-title">
+        <div className="hp-dialog-header"><div><p className="hp-eyebrow">Repair Shop Manager</p><h2 id="hp-dialog-title">{panel === "Demo" ? "Explore the sample workspace" : panel}</h2></div><button onClick={() => setPanel(null)} aria-label="Close"><HeroIcon name="close" /></button></div>
+        {panel === "Demo" ? <><p className="hp-dialog-intro">Try searching these fictional orders. This sample does not save any data.</p><RepairQueuePreview onNewOrder={() => { setPanel(null); navigate("/create-account"); }} /></> : <div className="hp-info">{information[panel]?.map(([title, text]) => <article key={title}><h3>{title}</h3><p>{text}</p></article>)}</div>}
+      </dialog>
     </div>
   );
 }
-export default HomePage;
