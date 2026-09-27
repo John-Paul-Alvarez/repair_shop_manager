@@ -1,6 +1,16 @@
 # Deployment readiness
 
-Sprint 8 prepares the application for deployment. It does not publish the app, choose a host, or configure email delivery.
+The frontend is hosted on Vercel and the API on Render. Email delivery is not configured.
+
+## Current hosting configuration
+
+- Frontend: `https://repair-shop-manager-green.vercel.app`, Vercel root directory `frontend`.
+- Backend: `https://repair-shop-manager-api.onrender.com`, Render root directory `backend`.
+- Render health check: `/api/health`.
+- Render `CLIENT_ORIGINS`: `https://repair-shop-manager-green.vercel.app` (no trailing slash).
+- `frontend/vercel.json` forwards `/api/*` to Render before applying the React route fallback. API responses must not be cached.
+- The frontend continues using relative `/api` requests so session cookies remain on the frontend origin. No MongoDB secrets belong in Vercel.
+- After deploying, Vercel `/api/health` should return JSON with `database: "connected"`. An unauthenticated `/api/auth/me` should return JSON with status 401, not a Vercel 404 or an HTML page.
 
 ## Before deploying
 
