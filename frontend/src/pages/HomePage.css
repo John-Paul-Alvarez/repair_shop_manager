@@ -66,8 +66,8 @@
   margin-right: auto;
   align-items: center;
 }
-.hp-nav button { font-size: clamp(10px, 1.04vw, 19px); min-height: 28px; }
-.hp-nav button:hover { color: var(--hp-orange); }
+.hp-nav button, .hp-nav a { display: inline-flex; align-items: center; font-size: clamp(10px, 1.04vw, 19px); min-height: 28px; }
+.hp-nav button:hover, .hp-nav a:hover { color: var(--hp-orange); }
 .hp-account { display: flex; align-items: center; gap: .8vw; }
 .hp-start, .hp-signin, .hp-demo {
   display: inline-flex;
@@ -160,7 +160,7 @@
   .hp-mobile-menu summary::-webkit-details-marker { display: none; }
   .hp-mobile-menu summary svg { width: 22px; height: 22px; }
   .hp-mobile-menu nav { position: absolute; right: 0; top: 42px; padding: 8px; min-width: 170px; background: #fffefa; border: 1px solid #d8d2c8; border-radius: 8px; box-shadow: 0 5px 25px #25252220; z-index: 5; }
-  .hp-mobile-menu nav button { display: block; width: 100%; padding: 12px; text-align: left; font-size: 14px; }
+  .hp-mobile-menu nav button, .hp-mobile-menu nav a { display: block; width: 100%; padding: 12px; text-align: left; font-size: 14px; }
   .hp-copy { position: relative; left: auto; top: auto; width: auto; margin: 25px 24px 0; padding-bottom: 32%; }
   .hp-eyebrow { font-size: 9px; }
   .hp-copy h1 { font-size: clamp(29px, 6.85vw, 48px); margin: 10px 0 15px; line-height: 1.06; }

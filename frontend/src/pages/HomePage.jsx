@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import RepairQueuePreview from "../components/RepairQueuePreview";
+import HomePageFeatures from "./HomePageFeatures";
 import "./HomePage.css";
 
 function HeroIcon({ name, ...props }) {
@@ -74,7 +75,8 @@ export default function HomePage() {
               <span>Repair Shop Manager <b>V2</b></span>
             </Link>
             <nav className="hp-nav" aria-label="Main navigation">
-              {["Features", "Roles", "Security", "Demo"].map((name) => <button key={name} onClick={() => openPanel(name)}>{name}</button>)}
+              <a href="#features">Features</a>
+              {["Roles", "Security", "Demo"].map((name) => <button key={name} onClick={() => openPanel(name)}>{name}</button>)}
             </nav>
             <div className="hp-account">
               <Link className="hp-signin" to="/sign-in">Sign in</Link>
@@ -82,7 +84,7 @@ export default function HomePage() {
             </div>
             <details className="hp-mobile-menu" ref={menu}>
               <summary aria-label="Open navigation"><HeroIcon name="menu" /></summary>
-              <nav aria-label="Mobile navigation">{["Features", "Roles", "Security", "Demo"].map((name) => <button key={name} onClick={() => openPanel(name)}>{name}</button>)}</nav>
+              <nav aria-label="Mobile navigation"><a href="#features" onClick={() => { menu.current.open = false; }}>Features</a>{["Roles", "Security", "Demo"].map((name) => <button key={name} onClick={() => openPanel(name)}>{name}</button>)}</nav>
             </details>
           </header>
           <div className="hp-copy">
@@ -102,6 +104,7 @@ export default function HomePage() {
         <section className="hp-benefits" aria-label="Why Repair Shop Manager">
           {benefits.map(({ icon, title, text }) => <article key={title}><span className={`hp-benefit-icon hp-benefit-${icon}`}><HeroIcon name={icon} /></span><div><h2>{title}</h2><p>{text}</p></div></article>)}
         </section>
+        <HomePageFeatures />
       </main>
       <dialog className="hp-dialog" ref={dialog} onCancel={() => setPanel(null)} onClose={() => setPanel(null)} aria-labelledby="hp-dialog-title">
         <div className="hp-dialog-header"><div><p className="hp-eyebrow">Repair Shop Manager</p><h2 id="hp-dialog-title">{panel === "Demo" ? "Explore the sample workspace" : panel}</h2></div><button onClick={() => setPanel(null)} aria-label="Close"><HeroIcon name="close" /></button></div>
