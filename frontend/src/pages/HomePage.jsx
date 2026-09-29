@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { Link, useNavigate } from "react-router";
 import RepairQueuePreview from "../components/RepairQueuePreview";
-import HomePageFeatures from "./HomePageFeatures";
 import HomePageMore from "./HomePageMore";
 import "./HomePage.css";
 
@@ -28,25 +27,6 @@ const benefits = [
   { icon: "shield", title: "Secure & private", text: "Session-based authentication and hashed tracking tokens." },
   { icon: "shop", title: "Shop-scoped data", text: "Your data, your shop. Records stay separate." },
 ];
-
-const information = {
-  Features: [
-    ["Receive a device", "Record the customer, device, and reported problem in a work order."],
-    ["Organize the repair", "Assign a technician, search the queue, and update the repair status."],
-    ["Keep everyone informed", "Save internal repair notes and share a private customer tracking link."],
-  ],
-  Roles: [
-    ["Shop manager", "Set up the shop, invite staff, assign repairs, and manage shop contact details."],
-    ["Front desk", "Create work orders and find the latest repair status to answer customer inquiries."],
-    ["Technician", "Work on assigned repairs, save internal notes, and update progress."],
-    ["Customer", "Open a private tracking link to check one repair and contact the shop."],
-  ],
-  Security: [
-    ["Private staff sessions", "Passwords are hashed with scrypt. Staff access requires an authenticated server-side session."],
-    ["Separate shop records", "The API checks shop membership and role before allowing access to repair records."],
-    ["Expiring tracking links", "Customer links expire after 30 days. Replacing a link disables the previous one. Only token hashes are stored."],
-  ],
-};
 
 export default function HomePage() {
   const [panel, setPanel] = useState(null);
@@ -76,8 +56,7 @@ export default function HomePage() {
               <span>Repair Shop Manager <b>V2</b></span>
             </Link>
             <nav className="hp-nav" aria-label="Main navigation">
-              <a href="#features">Features</a>
-              {["Roles", "Security", "Demo"].map((name) => <a key={name} href={`#${name.toLowerCase()}`}>{name}</a>)}
+              <button onClick={() => openPanel("Demo")}>Demo</button>
             </nav>
             <div className="hp-account">
               <Link className="hp-signin" to="/sign-in">Sign in</Link>
@@ -85,7 +64,7 @@ export default function HomePage() {
             </div>
             <details className="hp-mobile-menu" ref={menu}>
               <summary aria-label="Open navigation"><HeroIcon name="menu" /></summary>
-              <nav aria-label="Mobile navigation">{["Features", "Roles", "Security", "Demo"].map((name) => <a key={name} href={`#${name.toLowerCase()}`} onClick={() => { menu.current.open = false; }}>{name}</a>)}</nav>
+              <nav aria-label="Mobile navigation"><button onClick={() => openPanel("Demo")}>Demo</button></nav>
             </details>
           </header>
           <div className="hp-copy">
@@ -105,12 +84,11 @@ export default function HomePage() {
         <section className="hp-benefits" aria-label="Why Repair Shop Manager">
           {benefits.map(({ icon, title, text }) => <article key={title}><span className={`hp-benefit-icon hp-benefit-${icon}`}><HeroIcon name={icon} /></span><div><h2>{title}</h2><p>{text}</p></div></article>)}
         </section>
-        <HomePageFeatures />
-        <HomePageMore onExploreDemo={() => openPanel("Demo")} />
+        <HomePageMore />
       </main>
       <dialog className="hp-dialog" ref={dialog} onCancel={() => setPanel(null)} onClose={() => setPanel(null)} aria-labelledby="hp-dialog-title">
-        <div className="hp-dialog-header"><div><p className="hp-eyebrow">Repair Shop Manager</p><h2 id="hp-dialog-title">{panel === "Demo" ? "Explore the sample workspace" : panel}</h2></div><button onClick={() => setPanel(null)} aria-label="Close"><HeroIcon name="close" /></button></div>
-        {panel === "Demo" ? <><p className="hp-dialog-intro">Try searching these fictional orders. This sample does not save any data.</p><RepairQueuePreview onNewOrder={() => { setPanel(null); navigate("/create-account"); }} /></> : <div className="hp-info">{information[panel]?.map(([title, text]) => <article key={title}><h3>{title}</h3><p>{text}</p></article>)}</div>}
+        <div className="hp-dialog-header"><div><p className="hp-eyebrow">Repair Shop Manager</p><h2 id="hp-dialog-title">Explore the sample workspace</h2></div><button onClick={() => setPanel(null)} aria-label="Close"><HeroIcon name="close" /></button></div>
+        <p className="hp-dialog-intro">Try searching these fictional orders. This sample does not save any data.</p><RepairQueuePreview onNewOrder={() => { setPanel(null); navigate("/create-account"); }} />
       </dialog>
     </div>
   );
