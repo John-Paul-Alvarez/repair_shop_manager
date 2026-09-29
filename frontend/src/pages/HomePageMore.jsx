@@ -12,7 +12,7 @@ function Icon({ name }) {
 export default function HomePageMore() {
   return <div className="hp-more">
     <section className="hm-final" aria-labelledby="hm-final-title">
-      <div className="hm-final-copy"><p className="hm-eyebrow">Ready to organize your repair shop?</p><h2 id="hm-final-title">Get started with Repair Shop Manager V2.</h2><p>Bring your work orders, team, and customer updates<br />together in one shared workspace.</p></div>
+      <div className="hm-final-copy"><p className="hm-eyebrow">Ready to organize your repair shop?</p><h2 id="hm-final-title">Get started with Repair Shop Manager.</h2><p>Bring your work orders, team, and customer updates<br />together in one shared workspace.</p></div>
       <div className="hm-final-actions"><div><Link className="hm-button hm-button-orange" to="/create-account">Start free <Icon name="arrow" /></Link><Link className="hm-button hm-button-light" to="/sign-in"><Icon name="lock" /> Sign in</Link></div><p>Create your shop · Invite your team · Get to work</p></div>
     </section>
   </div>;

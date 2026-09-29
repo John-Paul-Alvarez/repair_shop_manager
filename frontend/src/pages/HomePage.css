@@ -68,7 +68,7 @@
 }
 .hp-nav button, .hp-nav a { display: inline-flex; align-items: center; font-size: clamp(10px, 1.04vw, 19px); min-height: 28px; }
 .hp-nav button:hover, .hp-nav a:hover { color: var(--hp-orange); }
-.hp-account { display: flex; align-items: center; gap: .8vw; }
+.hp-account { display: flex; align-items: center; gap: .8vw; margin-left: auto; }
 .hp-start, .hp-signin, .hp-demo {
   display: inline-flex;
   align-items: center;

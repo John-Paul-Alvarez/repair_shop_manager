@@ -16,7 +16,6 @@ function HeroIcon({ name, ...props }) {
     user: <><circle cx="12" cy="8" r="4" /><path d="M4 22v-3a8 8 0 0 1 16 0v3" /></>,
     check: <path d="m5 12 4 4L19 6" />,
     close: <path d="m6 6 12 12M6 18 18 6" />,
-    menu: <path d="M4 6h16M4 12h16M4 18h16" />,
   };
   return <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" {...props}>{paths[name]}</svg>;
 }
@@ -31,7 +30,6 @@ const benefits = [
 export default function HomePage() {
   const [panel, setPanel] = useState(null);
   const dialog = useRef(null);
-  const menu = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -40,7 +38,6 @@ export default function HomePage() {
   }, [panel]);
 
   function openPanel(name) {
-    if (menu.current) menu.current.open = false;
     setPanel(name);
   }
 
@@ -51,21 +48,14 @@ export default function HomePage() {
         <section className="hp-hero" aria-labelledby="hp-title">
           <img className="hp-scene" src="/images/landing-top-workshop.png" alt="Illustrative repair queue on a laptop and private repair tracking on a phone, on a sunlit workshop bench." width="1880" height="836" fetchPriority="high" />
           <header className="hp-header">
-            <Link className="hp-brand" to="/" aria-label="Repair Shop Manager V2 home">
+            <Link className="hp-brand" to="/" aria-label="Repair Shop Manager home">
               <span className="hp-brand-icon"><HeroIcon name="wrench" /></span>
-              <span>Repair Shop Manager <b>V2</b></span>
+              <span>Repair Shop Manager</span>
             </Link>
-            <nav className="hp-nav" aria-label="Main navigation">
-              <button onClick={() => openPanel("Demo")}>Demo</button>
-            </nav>
             <div className="hp-account">
               <Link className="hp-signin" to="/sign-in">Sign in</Link>
               <Link className="hp-start hp-start-small" to="/create-account">Start free <HeroIcon name="arrow" /></Link>
             </div>
-            <details className="hp-mobile-menu" ref={menu}>
-              <summary aria-label="Open navigation"><HeroIcon name="menu" /></summary>
-              <nav aria-label="Mobile navigation"><button onClick={() => openPanel("Demo")}>Demo</button></nav>
-            </details>
           </header>
           <div className="hp-copy">
             <p className="hp-eyebrow">Built for independent repair shops</p>
